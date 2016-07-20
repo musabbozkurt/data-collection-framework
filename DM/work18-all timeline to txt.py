@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
-
+import pymongo
+from pymongo import MongoClient
 import tweepy #https://github.com/tweepy/tweepy
 import json
+import glob
 
 #Twitter API credentials
 consumer_key = ""
@@ -10,55 +12,99 @@ consumer_secret = ""
 access_key = ""
 access_secret = ""
 
-filepath = "output files path"
-usernamefilepath = 'input file path'
+filePathForOutputs = ""
+ListOfUsernamefilepath = ''
+filepathformongo = ""
 
-def get_all_tweets(screen_name):
-    #Twitter only allows access to a users most recent 3240 tweets with this method
+client = MongoClient()
+db = client.twitter3
+streamingdb='streamingdb'
 
-    #authorize twitter, initialize tweepy
-    auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
-    auth.set_access_token(access_key, access_secret)
-    api = tweepy.API(auth)
+#authorize twitter, initialize tweepy
+auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+auth.set_access_token(access_key, access_secret)
+api = tweepy.API(auth)
 
-    #initialize a list to hold all the tweepy Tweets
-    alltweets = []
+# getting all tweets in users timeline according to their username.
+class getTweet:
+        def get_all_tweets(screen_name):
+            #Twitter only allows access to a users most recent 3240 tweets with this method
 
-    #make initial request for most recent tweets (200 is the maximum allowed count)
-    new_tweets = api.user_timeline(screen_name = screen_name,count=200)
+            #initialize a list to hold all the tweepy Tweets
+            alltweets = []
 
-    #save most recent tweets
-    alltweets.extend(new_tweets)
+            #make initial request for most recent tweets (200 is the maximum allowed count)
+            new_tweets = api.user_timeline(screen_name = screen_name,count=200)
 
-    #save the id of the oldest tweet less one
-    oldest = alltweets[-1].id - 1
+            #save most recent tweets
+            alltweets.extend(new_tweets)
 
-    #keep grabbing tweets until there are no tweets left to grab
-    while len(new_tweets) > 0:
-        print ("getting tweets before %s" % (oldest))
+            #save the id of the oldest tweet less one
+            oldest = alltweets[-1].id - 1
 
-        #all subsiquent requests use the max_id param to prevent duplicates
-        new_tweets = api.user_timeline(screen_name = screen_name,count=200,max_id=oldest)
+            #keep grabbing tweets until there are no tweets left to grab
+            while len(new_tweets) > 0:
+                print ("getting tweets before %s" % (oldest))
 
-        #save most recent tweets
-        alltweets.extend(new_tweets)
+                #all subsiquent requests use the max_id param to prevent duplicates
+                new_tweets = api.user_timeline(screen_name = screen_name,count=200,max_id=oldest)
 
-        #update the id of the oldest tweet less one
-        oldest = alltweets[-1].id - 1
+                #save most recent tweets
+                alltweets.extend(new_tweets)
 
-        print ("...%s tweets downloaded so far" % (len(alltweets)))
+                #update the id of the oldest tweet less one
+                oldest = alltweets[-1].id - 1
 
-    #write tweets to the txt files
-    for tweet in alltweets:
-        f = open(filepath+screen_name+".txt","a")
-        f.write(json.dumps(tweet._json) + "\n")
-    print(screen_name+"'s tweets added to file")
-    pass
+                print ("...%s tweets downloaded so far" % (len(alltweets)))
+
+            #write tweets to the txt files
+            for tweet in alltweets:
+                f = open(filePathForOutputs + screen_name + ".txt", "a")
+                f.write(json.dumps(tweet._json) + "\n")
+            print(screen_name+"'s tweets added to file")
+            pass
+# this class write all txt files which are in the filepath direction into mongodb database
+class writeMongo:
+    def writetoMongo(filepath):
+         # and inside that DB, a collection called "files"
+         filenames = glob.glob(filepath)
+         i = 0;
+         for filename in filenames:
+           with open(filename) as f:
+             for line in f:
+                 db.timeline.insert_one(json.loads(line))
+
+# stremaming class collect tweets according to keywords which are in the array
+class CustomStreamListener(tweepy.StreamListener):
+    stweets = []
+    def __init__(self, api):
+        self.api = api
+        super(tweepy.StreamListener, self).__init__()
+
+        self.db = pymongo.MongoClient().streamingdb
+
+    def on_data(self, tweet):
+        self.db.tweets.insert(json.loads(tweet))
+
+    def on_sapi(stwets):
+        sapi = tweepy.streaming.Stream(auth, CustomStreamListener(api))
+        sapi.filter(track=stwets)
+
+    def on_error(self, status_code):
+        return True # Don't kill the stream
+
+    def on_timeout(self):
+        return True # Don't kill the stream
 
 
 if __name__ == '__main__':
     #pass in the username of the account you want to download
-    with open(usernamefilepath,'r') as f:
-        for line in f:
-            for word in line.split():
-                get_all_tweets(word)
+
+    # with open(usernamefilepath,'r') as f:
+    #     for line in f:
+    #         for word in line.split():
+    #             getTweet.get_all_tweets(word)
+
+    # writeMongo.writetoMongo(filepathformongo)
+    #
+    CustomStreamListener.on_sapi(['ygs','indian'])
