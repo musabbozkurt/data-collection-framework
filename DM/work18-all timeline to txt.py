@@ -13,6 +13,7 @@ access_key = ""
 access_secret = ""
 
 filePathForOutputs = ""
+filePathForFollowersOutputs = ""
 ListOfUsernamefilepath = ''
 filepathformongo = ""
 
@@ -95,16 +96,30 @@ class CustomStreamListener(tweepy.StreamListener):
 
     def on_timeout(self):
         return True # Don't kill the stream
-
+#
+class Followers():
+    def write_on_file(self,screenname):
+        for follower in api.followers_ids(screenname):
+            try:
+                with open(filePathForFollowersOutputs + screenname + ".txt", "a") as f:
+                    f.write(api.get_user(follower).screen_name + ' \n')
+            except:
+                print(screenname+str(IOError))
+                pass
 
 if __name__ == '__main__':
     #pass in the username of the account you want to download
 
-    # with open(usernamefilepath,'r') as f:
-    #     for line in f:
-    #         for word in line.split():
-    #             getTweet.get_all_tweets(word)
+     with open(ListOfUsernamefilepath,'r') as f:
+        try:
+            for line in f:
+                  for word in line.split():
+                     # getTweet.get_all_tweets(word)
+                     Followers().write_on_file(word)
+        except:
+            print(str(IOError))
+            pass
 
     # writeMongo.writetoMongo(filepathformongo)
-    #
-    CustomStreamListener.on_sapi(['ygs','indian'])
+    # #
+    # CustomStreamListener.on_sapi(['ygs','indian'])
