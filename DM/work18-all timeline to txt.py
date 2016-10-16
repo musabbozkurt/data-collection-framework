@@ -9,10 +9,10 @@ import json
 import glob
 
 #Twitter API credentials
-consumer_key = "uzludXf9EsGOGfoPpL4ibe1N6"
-consumer_secret = "QABjGRsJ46N7KFPRAHyy3Fl8S8x2OnrnvkeORK4pedXRFNviv1"
-access_key = "703245298932563968-LCnaCNU8qNkqoHpFabWH1LWt1Qaay9I"
-access_secret = "qXPH1ES9EvdwPi2JAwZAjKHENyTtoPO9swWybJi7mvp8K"
+consumer_key = ""
+consumer_secret = ""
+access_key = ""
+access_secret = ""
 
 #authorize twitter, initialize tweepy
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -20,10 +20,10 @@ auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
 
 #files direction
-filePathForOutputs = "D:/PycharmProjects/timelines/lise öğrencileri/"
-filePathForFollowersOutputs = "D:/PycharmProjects/followers/"
-ListOfUsernamefilepath = 'D:/PycharmProjects/followers/s/liseogrencileri.txt'
-filepathformongo = "D:/PycharmProjects/timelines/MCGtimelines/MCGtimeline/*.txt"
+filePathForOutputs = ""
+filePathForFollowersOutputs = ""
+ListOfUsernamefilepath = ''
+filepathformongo = ""
 
 #create mongodb database
 client = MongoClient()
