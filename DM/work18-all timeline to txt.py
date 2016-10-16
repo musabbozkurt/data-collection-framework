@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
+
+#import libraries
 import pymongo
 from pymongo import MongoClient
 import tweepy #https://github.com/tweepy/tweepy
@@ -7,27 +9,29 @@ import json
 import glob
 
 #Twitter API credentials
-consumer_key = ""
-consumer_secret = ""
-access_key = ""
-access_secret = ""
-
-filePathForOutputs = ""
-filePathForFollowersOutputs = ""
-ListOfUsernamefilepath = ''
-filepathformongo = ""
-
-client = MongoClient()
-db = client.twitter3
-streamingdb='streamingdb'
+consumer_key = "uzludXf9EsGOGfoPpL4ibe1N6"
+consumer_secret = "QABjGRsJ46N7KFPRAHyy3Fl8S8x2OnrnvkeORK4pedXRFNviv1"
+access_key = "703245298932563968-LCnaCNU8qNkqoHpFabWH1LWt1Qaay9I"
+access_secret = "qXPH1ES9EvdwPi2JAwZAjKHENyTtoPO9swWybJi7mvp8K"
 
 #authorize twitter, initialize tweepy
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_key, access_secret)
 api = tweepy.API(auth)
 
+#files direction
+filePathForOutputs = "D:/PycharmProjects/timelines/lise öğrencileri/"
+filePathForFollowersOutputs = "D:/PycharmProjects/followers/"
+ListOfUsernamefilepath = 'D:/PycharmProjects/followers/s/liseogrencileri.txt'
+filepathformongo = "D:/PycharmProjects/timelines/MCGtimelines/MCGtimeline/*.txt"
+
+#create mongodb database
+client = MongoClient()
+db = client.twitter3
+streamingdb='streamingdb'
+
 # getting all tweets in users timeline according to their username.
-class getTweet:
+class TweetCollector:
         def get_all_tweets(screen_name):
             #Twitter only allows access to a users most recent 3240 tweets with this method
 
@@ -64,8 +68,9 @@ class getTweet:
                 f.write(json.dumps(tweet._json) + "\n")
             print(screen_name+"'s tweets added to file")
             pass
+
 # this class write all txt files which are in the filepath direction into mongodb database
-class writeMongo:
+class MongoWriter:
     def writetoMongo(filepath):
          # and inside that DB, a collection called "files"
          filenames = glob.glob(filepath)
@@ -96,8 +101,9 @@ class CustomStreamListener(tweepy.StreamListener):
 
     def on_timeout(self):
         return True # Don't kill the stream
-#
-class Followers():
+
+#Collection all followers on twitter according to useername
+class FollowerCollector():
     def write_on_file(self,screenname):
         for follower in api.followers_ids(screenname):
             try:
@@ -114,12 +120,11 @@ if __name__ == '__main__':
         try:
             for line in f:
                   for word in line.split():
-                     # getTweet.get_all_tweets(word)
-                     Followers().write_on_file(word)
+                     TweetCollector.get_all_tweets(word)
+                     FollowerCollector().write_on_file(word)
         except:
             print(str(IOError))
             pass
 
-    # writeMongo.writetoMongo(filepathformongo)
-    # #
-    # CustomStreamListener.on_sapi(['ygs','indian'])
+     MongoWriter.writetoMongo(filepathformongo)
+     CustomStreamListener.on_sapi(['ygs','indian'])
