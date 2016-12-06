@@ -61,10 +61,10 @@ logger = get_log()
 
 class AllVariableClass:
         # Twitter API credentials
-        consumer_key = "uzludXf9EsGOGfoPpL4ibe1N6"
-        consumer_secret = "QABjGRsJ46N7KFPRAHyy3Fl8S8x2OnrnvkeORK4pedXRFNviv1"
-        access_key = "703245298932563968-LCnaCNU8qNkqoHpFabWH1LWt1Qaay9I"
-        access_secret = "qXPH1ES9EvdwPi2JAwZAjKHENyTtoPO9swWybJi7mvp8K"
+        consumer_key = ""
+        consumer_secret = ""
+        access_key = ""
+        access_secret = ""
 
         # authorize twitter, initialize tweepy
         auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
@@ -72,12 +72,12 @@ class AllVariableClass:
         api = tweepy.API(auth)
 
         # files direction
-        filePathForOutputs = "/Users/musabbozkurt/Downloads/MCGtimelines/NewTime"
-        filePathForFollowersOutputs = "/home/dwarf3/Desktop/liseogrencileri/followers/"
-        ListOfUsernamefilepath = '/Users/musabbozkurt/Downloads/MCGtimelines/user.txt'
-        filepathformongo = "/home/dwarf3/Desktop/liseogrencileri/liseogrencileri/*.txt"
-        filepathfortokenization = "/home/dwarf3/Desktop/liseogrencileri/liseogrencileri/"
-        streamingTxtFile = "/home/dwarf3/PycharmProjects/TMproject/fetched_tweets.txt"
+        filePathForOutputs = ""
+        filePathForFollowersOutputs = ""
+        ListOfUsernamefilepath = ''
+        filepathformongo = ""
+        filepathfortokenization = ""
+        streamingTxtFile = ""
 
         # create mongodb database
         client = MongoClient()
