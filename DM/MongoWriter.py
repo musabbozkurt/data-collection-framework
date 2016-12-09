@@ -3,8 +3,9 @@
 import glob
 import json
 
-from DM import AllVariableClass
+import AllVariableClass
 from DM import GraduationProject
+
 
 class MongoWriter():
     def writetoMongo(filepath):
@@ -15,4 +16,4 @@ class MongoWriter():
            with open(filename) as f:
              for line in f:
                  AllVariableClass.db.timeline.insert_one(json.loads(line))
-                 GraduationProject.logger.info("Filename "+filename+" added to mongodb collection name is files")
+                 GraduationProject.logger.info("Filename " + filename + " added to mongodb collection name is files")

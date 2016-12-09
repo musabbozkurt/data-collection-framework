@@ -31,29 +31,32 @@ def get_log():
 
 logger = get_log()
 
+import ConfigParser
+from TweetCollector import TweetCollector
 
-
-from DM import ConfigParser,TweetCollector,FollowerCollector,MongoWriter
-from DM import CustomStreamListener,Analysis,TermFrequency
-from DM import SemanticOrientation
-
+#from DM import CustomStreamListener,Analysis,TermFrequency
+#from DM import SemanticOrientation
 if __name__ == '__main__':
     # # pass in the username of the account you want to download
     #
-    with open(ConfigParser.ListOfUsernamefilepath,'r') as f:
+    tweetcollect = TweetCollector()
+
+    numberOfTweet=int(input("How many tweets do you want to collect? : "),10)
+
+    with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
              for line in f:
                    for word in line.split():
-                      TweetCollector.get_all_tweets(word)
-                      FollowerCollector().write_on_file(word)
-    MongoWriter.writetoMongo(ConfigParser.filepathformongo)
-    CustomStreamListener.on_sapi(['#python','java','#java','javascript','#javascript'])
-    Analysis.lang_analiz(ConfigParser.streamingTxtFile)
-    Analysis.country_analiz(ConfigParser.streamingTxtFile)
-    Analysis.location_analiz(ConfigParser.streamingTxtFile)
-    Analysis.timezone_analiz(ConfigParser.streamingTxtFile)
-    TermFrequency.termfreq(ConfigParser.filepathfortokenization)
-    SemanticOrientation.term_counter()
-    SemanticOrientation.semantic('java',ConfigParser.streamingTxtFile)
-    Analysis.lang(ConfigParser.streamingTxtFile)
-    Analysis.lang(ConfigParser.filepathfortokenization)
-    Analysis.screename(ConfigParser.filepathfortokenization)
+                      tweetcollect.get_all_tweets(word, numberOfTweet)
+    #                  FollowerCollector().write_on_file(word)
+    #MongoWriter.writetoMongo(ConfigParser.filepathformongo)
+    #CustomStreamListener.on_sapi(['#python','java','#java','javascript','#javascript'])
+    #Analysis.lang_analiz(ConfigParser.streamingTxtFile)
+    #Analysis.country_analiz(ConfigParser.streamingTxtFile)
+    #Analysis.location_analiz(ConfigParser.streamingTxtFile)
+    #Analysis.timezone_analiz(ConfigParser.streamingTxtFile)
+    #TermFrequency.termfreq(ConfigParser.filepathfortokenization)
+    #SemanticOrientation.term_counter()
+    #SemanticOrientation.semantic('java',ConfigParser.streamingTxtFile)
+    #Analysis.lang(ConfigParser.streamingTxtFile)
+    #Analysis.lang(ConfigParser.filepathfortokenization)
+    #Analysis.screename(ConfigParser.filepathfortokenization)

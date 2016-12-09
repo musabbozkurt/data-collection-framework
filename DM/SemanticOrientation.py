@@ -2,24 +2,24 @@ import json
 import operator
 import re
 import string
-import numpy as np
+from collections import Counter
 
 import matplotlib.pyplot as plt
 import nltk
-
-
-from collections import Counter
-
+import numpy as np
 from nltk.corpus import stopwords
 
-from DM import ConfigParser
-
+import ConfigParser
 
 
 class SemanticOrientation():
 
-    tokens_re = re.compile(r'(' + '|'.join(ConfigParser.regex_str) + ')', re.VERBOSE | re.IGNORECASE)
-    emoticon_re = re.compile(r'^' + ConfigParser.emoticons_str + '$', re.VERBOSE | re.IGNORECASE)
+    emoticons_str= ConfigParser.emoticons_str
+    regex_str=[ConfigParser.regex_str]
+
+
+    tokens_re = re.compile(r'(' + '|'.join(regex_str) + ')', re.VERBOSE | re.IGNORECASE)
+    emoticon_re = re.compile(r'^' + emoticons_str + '$', re.VERBOSE | re.IGNORECASE)
 
     def preprocess(s, lowercase=False):
         tokens = SemanticOrientation.tokens_re.findall(s)

@@ -1,7 +1,8 @@
 import re
 
-from DM import GraduationProject
+import GraduationProject
 from DM import ConfigParser
+
 
 class TokenizationTextFile():
 

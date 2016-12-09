@@ -1,20 +1,19 @@
 import os
-
 import string
 
+import numpy as np
+from sklearn import cross_validation, svm
+from sklearn import metrics
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
-from sklearn.naive_bayes import MultinomialNB
-from sklearn import cross_validation, svm
-import numpy as np
-from sklearn.model_selection import cross_val_score
-from sklearn import metrics
 from sklearn.model_selection import ShuffleSplit
 from sklearn.model_selection import cross_val_predict
+from sklearn.model_selection import cross_val_score
+from sklearn.naive_bayes import MultinomialNB
 
+import TokenizationTweet
 
-from DM import TokenizationTweet
 
 class TermFrequency:
     def preprocess(term):

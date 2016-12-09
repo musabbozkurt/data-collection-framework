@@ -1,7 +1,7 @@
 import configparser
 
 configParser = configparser.RawConfigParser()
-configFilePath = r'/Users/musabbozkurt/PycharmProjects/DM/2016_Jan_CSE498_Graduation.config'
+configFilePath = r'/Users/musabbozkurt/p/2016_Jan_CSE498_Graduation.config'
 configParser.read(configFilePath)
 
 filePathForOutputs = configParser.get('your-config', 'filePathForOutputs')

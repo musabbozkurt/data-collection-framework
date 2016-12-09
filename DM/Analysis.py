@@ -7,11 +7,13 @@
 # You should install pandas and matplotlib if you don't have them in your machine.
 import json
 import os
-import pandas as pd
+
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 
-from DM import GraduationProject
+import GraduationProject
+
 
 class Analiz():
     # in this  function analysis of languages from text file which contains json data of tweets
@@ -389,10 +391,10 @@ class Analiz():
                             # tokens = NGrams.ngrams(tweet['text'],3)
                             # print(tokens)
                         except Exception as e:
-                            GraduationProject.logger.error("problem is " ,str(e))
+                            GraduationProject.logger.error("problem is ", str(e))
                             continue
                 # Now, we can log to the root logger, or any other logger. First the root...
-                GraduationProject.logger.info('Analizing file According to Screenname: %s' , file)
+                GraduationProject.logger.info('Analizing file According to Screenname: %s', file)
 
         print(len(tweets_data))
         print(len(tweets_data))

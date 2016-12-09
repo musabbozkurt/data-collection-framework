@@ -2,9 +2,9 @@
 import pymongo
 import tweepy
 
-from DM import GraduationProject
+import AllVariableClass
 from DM import ConfigParser
-from DM import AllVariableClass
+from DM import GraduationProject
 
 
 class CustomStreamListener(tweepy.StreamListener):
@@ -18,7 +18,7 @@ class CustomStreamListener(tweepy.StreamListener):
     def on_data(self, tweet):
         with open(ConfigParser.streamingTxtFile, 'a') as tf:
             tf.write(tweet)
-        GraduationProject.logger.info("Tweets which are collecting from Streaming API added to "+ConfigParser.streamingTxtFile+ " filepath")
+        GraduationProject.logger.info("Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
         return True
         self.db.tweets.insert(json.loads(tweet))
         logger.info("Tweets which are collecting from Streaming API added to mongodb ")
@@ -29,7 +29,7 @@ class CustomStreamListener(tweepy.StreamListener):
         GraduationProject.logger.info("Getting Tweets json from Streaming API")
 
     def on_error(self, status_code):
-        GraduationProject.logger.error("Don't kill the stream here status code : "+status_code)
+        GraduationProject.logger.error("Don't kill the stream here status code : " + status_code)
         return True # Don't kill the stream
 
     def on_timeout(self):
