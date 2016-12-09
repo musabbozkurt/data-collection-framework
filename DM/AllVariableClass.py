@@ -1,7 +1,7 @@
 import tweepy
 from pymongo import MongoClient
 
-import ConfigParser as conf
+from DM import ConfigParser as conf
 
 
 #from DM import GraduationProject as grad

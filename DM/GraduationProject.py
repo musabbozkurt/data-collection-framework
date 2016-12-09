@@ -1,7 +1,6 @@
-
-import logging
-
 def get_log():
+    import logging
+
     logger = logging.getLogger('PyPro')
     logger.setLevel(logging.DEBUG)
 
@@ -31,32 +30,41 @@ def get_log():
 
 logger = get_log()
 
-import ConfigParser
-from TweetCollector import TweetCollector
 
-#from DM import CustomStreamListener,Analysis,TermFrequency
-#from DM import SemanticOrientation
 if __name__ == '__main__':
-    # # pass in the username of the account you want to download
-    #
-    tweetcollect = TweetCollector()
+    try:
+        from DM import ConfigParser
+        from DM.TweetCollector import TweetCollector
+        from DM.FollowerCollector import FollowerCollector
 
-    numberOfTweet=int(input("How many tweets do you want to collect? : "),10)
+        # from DM import CustomStreamListener,Analysis,TermFrequency
+        # from DM import SemanticOrientation
+        # # pass in the username of the account you want to download
+        #
+        tweetcollect = TweetCollector()
+        followercollect= FollowerCollector()
 
-    with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
-             for line in f:
-                   for word in line.split():
-                      tweetcollect.get_all_tweets(word, numberOfTweet)
-    #                  FollowerCollector().write_on_file(word)
-    #MongoWriter.writetoMongo(ConfigParser.filepathformongo)
-    #CustomStreamListener.on_sapi(['#python','java','#java','javascript','#javascript'])
-    #Analysis.lang_analiz(ConfigParser.streamingTxtFile)
-    #Analysis.country_analiz(ConfigParser.streamingTxtFile)
-    #Analysis.location_analiz(ConfigParser.streamingTxtFile)
-    #Analysis.timezone_analiz(ConfigParser.streamingTxtFile)
-    #TermFrequency.termfreq(ConfigParser.filepathfortokenization)
-    #SemanticOrientation.term_counter()
-    #SemanticOrientation.semantic('java',ConfigParser.streamingTxtFile)
-    #Analysis.lang(ConfigParser.streamingTxtFile)
-    #Analysis.lang(ConfigParser.filepathfortokenization)
-    #Analysis.screename(ConfigParser.filepathfortokenization)
+        numberOfTweet=int(input("How many tweets do you want to collect? : "),10)
+
+        with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
+                 for line in f:
+                       for word in line.split():
+        #                  tweetcollect.get_all_tweets(word, numberOfTweet)
+                          followercollect.write_on_file(word)
+        #MongoWriter.writetoMongo(ConfigParser.filepathformongo)
+        #CustomStreamListener.on_sapi(['#python','java','#java','javascript','#javascript'])
+        #Analysis.lang_analiz(ConfigParser.streamingTxtFile)
+        #Analysis.country_analiz(ConfigParser.streamingTxtFile)
+        #Analysis.location_analiz(ConfigParser.streamingTxtFile)
+        #Analysis.timezone_analiz(ConfigParser.streamingTxtFile)
+        #TermFrequency.termfreq(ConfigParser.filepathfortokenization)
+        #SemanticOrientation.term_counter()
+        #SemanticOrientation.semantic('java',ConfigParser.streamingTxtFile)
+        #Analysis.lang(ConfigParser.streamingTxtFile)
+        #Analysis.lang(ConfigParser.filepathfortokenization)
+        #Analysis.screename(ConfigParser.filepathfortokenization)
+    except:
+        import sys
+        e = sys.exc_info()[0]
+        print("Error: %s" % e)
+        logger.error(str(e))

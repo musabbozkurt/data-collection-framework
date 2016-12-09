@@ -3,7 +3,7 @@
 import glob
 import json
 
-import AllVariableClass
+from DM import AllVariableClass
 from DM import GraduationProject
 
 

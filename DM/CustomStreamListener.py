@@ -2,7 +2,7 @@
 import pymongo
 import tweepy
 
-import AllVariableClass
+from DM import AllVariableClass
 from DM import ConfigParser
 from DM import GraduationProject
 

@@ -9,7 +9,7 @@ import nltk
 import numpy as np
 from nltk.corpus import stopwords
 
-import ConfigParser
+from DM import ConfigParser
 
 
 class SemanticOrientation():

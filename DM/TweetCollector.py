@@ -50,12 +50,12 @@ class TweetCollector():
             pass
 
         def on_error(self, status_code):
-            import GraduationProject
+            from DM import GraduationProject
             GraduationProject.logger.error("Don't kill the collector here status code is : " + status_code)
             return True  # Don't kill the collector
 
         def on_timeout(self):
-            import GraduationProject
+            from DM import GraduationProject
 
             GraduationProject.logger.error("Don't kill the collector on timeouts.")
             return True  # Don't kill the collector

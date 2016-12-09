@@ -1,6 +1,6 @@
 import re
 
-import GraduationProject
+from DM import GraduationProject
 from DM import ConfigParser
 
 

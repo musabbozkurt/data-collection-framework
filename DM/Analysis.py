@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-import GraduationProject
+from DM import GraduationProject
 
 
 class Analiz():

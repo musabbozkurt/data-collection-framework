@@ -12,7 +12,7 @@ from sklearn.model_selection import cross_val_predict
 from sklearn.model_selection import cross_val_score
 from sklearn.naive_bayes import MultinomialNB
 
-import TokenizationTweet
+from DM import TokenizationTweet
 
 
 class TermFrequency:
