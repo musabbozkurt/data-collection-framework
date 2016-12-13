@@ -80,8 +80,12 @@ while loop:  ## While loop which will keep going until loop = False
             from DM.MongoWriter import MongoWriter
             from DM import ConfigParser
 
+            mongodbName = input("Please enter database name to store : ")
+
+            mongodbCollectionName = input("Please enter collection name inside database : ")
+
             mongoWrite = MongoWriter()
-            mongoWrite.writetoMongo(ConfigParser.filepathformongo)
+            mongoWrite.writetoMongo(ConfigParser.filepathformongo,mongodbName,mongodbCollectionName)
 
         except:
             import sys
@@ -94,6 +98,7 @@ while loop:  ## While loop which will keep going until loop = False
             from DM import ConfigParser
 
             analysis = Analysis()
+
 
             analysis.lang_analiz(ConfigParser.filepathformongo, Analysis.numberOfBar)
             analysis.country_analiz(ConfigParser.filepathformongo, Analysis.numberOfBar)
