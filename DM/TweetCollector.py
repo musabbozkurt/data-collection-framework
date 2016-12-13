@@ -5,7 +5,7 @@ class TweetCollector():
         def get_all_tweets(self,screen_name,input):
             import json
 
-            from DM import GraduationProject
+            from DM import Logging
             from DM import ConfigParser
             from DM.AllVariableClass import AllVariableClass
 
@@ -39,24 +39,24 @@ class TweetCollector():
 
                 print ("...%s tweets downloaded so far" % (len(alltweets)))
                 if (len(alltweets)) >= input:
-                    GraduationProject.logger.info(str(input)+" tweets have been collected")
+                    Logging.log(str(input)+" tweets have been collected")
                     break
             #write tweets to the txt files
             for tweet in alltweets:
                 f = open(ConfigParser.filePathForOutputs + screen_name + ".txt", "a")
                 f.write(json.dumps(tweet._json) + "\n")
             print(screen_name+"'s tweets added to file")
-            GraduationProject.logger.info("Tweets have been added to " + screen_name + ".txt")
+            Logging.log("Tweets have been added to " + screen_name + ".txt")
             pass
 
         def on_error(self, status_code):
-            from DM import GraduationProject
-            GraduationProject.logger.error("Don't kill the collector here status code is : " + status_code)
+            from DM import Logging
+            Logging.log("Don't kill the collector here status code is : " + status_code)
             return True  # Don't kill the collector
 
         def on_timeout(self):
-            from DM import GraduationProject
+            from DM import Logging
 
-            GraduationProject.logger.error("Don't kill the collector on timeouts.")
+            Logging.log("Don't kill the collector on timeouts.")
             return True  # Don't kill the collector
 
