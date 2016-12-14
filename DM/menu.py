@@ -46,7 +46,7 @@ while loop:  ## While loop which will keep going until loop = False
                         tweetcollect.get_all_tweets(username, numberOfTweet)
                 else:
                     loop2=False
-                    print("You have exited from analysis succesfully...")
+                    print("You have exited from tweet collector succesfully...")
 
         except:
             import sys
@@ -79,7 +79,7 @@ while loop:  ## While loop which will keep going until loop = False
                     followercollect.write_on_file(username)
                 else:
                     loop3=False
-                    print("You have exited from analysis succesfully...")
+                    print("You have exited from follower collector succesfully...")
 
         except:
             import sys
@@ -137,38 +137,52 @@ while loop:  ## While loop which will keep going until loop = False
                 from DM import ConfigParser
 
                 analysis = Analysis()
-                numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
 
                 if choice == 1:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     ## You can add your code or functions here
                     analysis.lang_analiz(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 2:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.country_analiz(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 3:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.location_analiz(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 4:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.timezone_analiz(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 5:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.tweet(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 6:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.create_at(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 7:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.user_id(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 8:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.id_str(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 9:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.username(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 10:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.screename(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 11:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.followers_count(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 12:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.friends_count(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 13:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.user_lang(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 14:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.retweet_count(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 15:
+                    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     analysis.favorite_count(ConfigParser.filepathformongo, numberOfBar)
                 elif choice == 16:
                     print("You have exited from analysis succesfully...")
@@ -184,9 +198,9 @@ while loop:  ## While loop which will keep going until loop = False
             Logging.log(str(e))
     elif choice == 5:
         try:
-
             mongodbName = input("Please enter database name to store : ")
             mongodbCollectionName = input("Please enter collection name inside database : ")
+            fileName=input("Please enter file name : ")
 
             a = input("Enter a word, hashtag or something else or type stop to exit: ")
             sentence = []
@@ -199,6 +213,7 @@ while loop:  ## While loop which will keep going until loop = False
             from DM.AllVariableClass import AllVariableClass
 
             csl = CustomStreamListener(AllVariableClass.api)
+
             csl.on_sapi(sentence)
 
         except:
@@ -234,13 +249,19 @@ while loop:  ## While loop which will keep going until loop = False
             Logging.log(str(e))
         ## You can add your code or functions here
     elif choice == 7:
-
+        try:
             from DM.SemanticOrientation import SemanticOrientation
+            from DM import ConfigParser
 
-            SemanticOrientation.term_counter()
-            SemanticOrientation.semantic('java', ConfigParser.streamingTxtFile)
+            inputforMostCommon=int(input("Enter number to display most common : "))
+            termMax=int(input("Enter number to top of maximum term : "))
 
+            a = input("Enter a word, hashtag or something else or type stop to exit: ")
 
+            SemanticOrientation.term_counter(ConfigParser.streamingTxtFile,inputforMostCommon)
+            SemanticOrientation.semantic(a, ConfigParser.streamingTxtFile,inputforMostCommon,termMax)
+
+        except:
             import sys
             e = sys.exc_info()[1]
             print("Error: %s" % e)

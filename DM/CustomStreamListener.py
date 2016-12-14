@@ -3,7 +3,7 @@ import pymongo
 import tweepy
 
 from DM.AllVariableClass import AllVariableClass
-from DM.menu import mongodbName, mongodbCollectionName, sentence
+from DM.menu import mongodbName, mongodbCollectionName,fileName
 
 from DM import ConfigParser
 from DM import Logging
@@ -17,7 +17,7 @@ class CustomStreamListener(tweepy.StreamListener):
     def on_data(self, tweet):
         self.db = pymongo.MongoClient().__getattr__(mongodbName).__getattr__(mongodbCollectionName)
         Logging.log(mongodbName+" database has been created.")
-        with open(ConfigParser.streamingTxtFile, 'a') as tf:
+        with open(ConfigParser.streamingTxtFile+fileName, 'a') as tf:
             tf.write(tweet)
             import json
             self.db.insert(json.loads(tweet))

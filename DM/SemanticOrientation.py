@@ -14,7 +14,20 @@ from DM import ConfigParser
 
 class SemanticOrientation():
     emoticons_str = ConfigParser.emoticons_str
-    regex_str = [ConfigParser.regex_str]
+    regex_str = [emoticons_str,
+    r'<[^>]+>',  # HTML tags
+    r'(?:@[\w_]+)',  # @-mentions
+    r"(?:\#+[\w_]+[\w\'_\-]*[\w_]+)",  # hash-tags
+    r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+',  # URLs
+
+    r'(?:(?:\d+,?)+(?:\.?\d+)?)',  # numbers
+    r"(?:[a-z][a-z'\-_]+[a-z])",  # words with - and '
+    r'(?:[\w_]+)',  # other words
+    r'(?:\S)'  # anything else
+                 ]
+
+    print(regex_str)
+    print(emoticons_str)
 
     tokens_re = re.compile(r'(' + '|'.join(regex_str) + ')', re.VERBOSE | re.IGNORECASE)
     emoticon_re = re.compile(r'^' + emoticons_str + '$', re.VERBOSE | re.IGNORECASE)
@@ -37,24 +50,24 @@ class SemanticOrientation():
                 count_all.update(terms_all)
             # Print the first 5 most frequent words
             # print(count_all)
-            print('Top  ' + inputforMostcommon)
+            print('FIRST ' + str(inputforMostcommon)+' MOST FREQUENT WORDS ARE BELOW')
             print(count_all.most_common(inputforMostcommon))
 
         punctuation = list(string.punctuation)
         stop = stopwords.words('english') + punctuation + ['rt', 'via']
         terms_stop = [term for term in SemanticOrientation.preprocess(tweet['text']) if term not in stop]
-        print('Stop terms ')
+        print('ALL STOP TERMS ARE BELOW ')
         print(terms_stop)
 
         # Count terms only once, equivalent to Document Frequency
         terms_single = set(terms_all)
-        print('terms_single ')
+        print('COUNT TERMS ONLY ONCE SINGLE TERMS ARE BELOW')
         print(terms_single)
 
         # Count hashtags only
         terms_hash = [term for term in SemanticOrientation.preprocess(tweet['text'])
                       if term.startswith('#')]
-        print('terms_hash ')
+        print('ALL HASHTAG TERMS ARE BELOW. ')
         print(terms_hash)
 
         # Count terms only (no hashtags, no mentions)
@@ -62,10 +75,10 @@ class SemanticOrientation():
                       if term not in stop and
                       not term.startswith(('#', '@'))]
 
-        print('terms_only ')
+        print('ALL TERMS ARE BELOW THERE IS NO HASHTAGS OR MENTIONS')
         print(terms_only)
 
-    def semantic(search_word, fname):
+    def semantic(search_word, fname, inputforMostCommon, termMax):
 
         from collections import defaultdict
         # remember to include the other import from the previous post
@@ -86,7 +99,7 @@ class SemanticOrientation():
                 terms_only = [term for term in SemanticOrientation.preprocess(tweet['text'])
                               if term not in stop
                               and not term.startswith(('#', '@'))]
-                print('All terms ')
+                print('ALL TERMS ARE BELOW')
                 print(terms_only)
 
                 # Build co-occurrence matrix
@@ -106,8 +119,8 @@ class SemanticOrientation():
 
                 # Get the most frequent co-occurrences
                 terms_max = sorted(com_max, key=operator.itemgetter(1), reverse=True)
-                print('the most frequent co-occurrences ')
-                print(terms_max[:5])
+                print('THE MOST FREQUENT CO-OCCURRENCES ARE BELOW')
+                print(terms_max[:termMax])
 
                 # search_word  # pass a term as a command-line argument
                 count_search = Counter()
@@ -120,7 +133,7 @@ class SemanticOrientation():
                         count_search.update(terms_only)
 
                 print("Co-occurrence for %s:" % search_word)
-                print(count_search.most_common(20))
+                print(count_search.most_common(inputforMostCommon))
 
                 names, values = zip(*terms_max)
                 ind = np.arange(len(terms_max))  # the x locations for the groups
@@ -145,9 +158,3 @@ class SemanticOrientation():
                 autolabel(rects1)
 
                 plt.show()
-
-                # n_docs is the total n. of tweets
-                p_t = terms_all
-                p_t_com = nltk.defaultdict(lambda: nltk.defaultdict(int))
-                positive_vocab = ConfigParser.positive_vocab
-                negative_vocab = ConfigParser.negative_vocab
