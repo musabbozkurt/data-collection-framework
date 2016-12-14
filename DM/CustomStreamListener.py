@@ -5,7 +5,6 @@ import tweepy
 from DM.AllVariableClass import AllVariableClass
 from DM.menu import mongodbName, mongodbCollectionName, sentence
 
-allClassVar=AllVariableClass()
 from DM import ConfigParser
 from DM import Logging
 
@@ -27,7 +26,7 @@ class CustomStreamListener(tweepy.StreamListener):
         return True
 
     def on_sapi(self,stwets):
-        sapi = tweepy.streaming.Stream(allClassVar.auth, CustomStreamListener(AllVariableClass.api))
+        sapi = tweepy.streaming.Stream(AllVariableClass.auth, CustomStreamListener(AllVariableClass.api))
         sapi.filter(track=stwets)
         Logging.log("Getting Tweets json from Streaming API")
 
@@ -39,7 +38,3 @@ class CustomStreamListener(tweepy.StreamListener):
     def on_timeout(self):
         Logging.log("Don't kill the stream on timeouts")
         return True # Don't kill the stream
-
-
-csl = CustomStreamListener(AllVariableClass.api)
-csl.on_sapi(sentence)

@@ -13,10 +13,8 @@ from DM import ConfigParser
 
 
 class SemanticOrientation():
-
-    emoticons_str= ConfigParser.emoticons_str
-    regex_str=[ConfigParser.regex_str]
-
+    emoticons_str = ConfigParser.emoticons_str
+    regex_str = [ConfigParser.regex_str]
 
     tokens_re = re.compile(r'(' + '|'.join(regex_str) + ')', re.VERBOSE | re.IGNORECASE)
     emoticon_re = re.compile(r'^' + emoticons_str + '$', re.VERBOSE | re.IGNORECASE)
@@ -27,8 +25,7 @@ class SemanticOrientation():
             tokens = [token if SemanticOrientation.emoticon_re.search(token) else token.lower() for token in tokens]
         return tokens
 
-
-    def term_counter(*args,**kwargs):
+    def term_counter(fname, inputforMostcommon):
         fname = ConfigParser.streamingTxtFile
         with open(fname, 'r') as f:
             count_all = Counter()
@@ -40,9 +37,8 @@ class SemanticOrientation():
                 count_all.update(terms_all)
             # Print the first 5 most frequent words
             # print(count_all)
-            print('Top 5 ')
-            print(count_all.most_common(5))
-
+            print('Top  ' + inputforMostcommon)
+            print(count_all.most_common(inputforMostcommon))
 
         punctuation = list(string.punctuation)
         stop = stopwords.words('english') + punctuation + ['rt', 'via']
@@ -69,8 +65,7 @@ class SemanticOrientation():
         print('terms_only ')
         print(terms_only)
 
-
-    def semantic(search_word,fname):
+    def semantic(search_word, fname):
 
         from collections import defaultdict
         # remember to include the other import from the previous post
@@ -91,7 +86,7 @@ class SemanticOrientation():
                 terms_only = [term for term in SemanticOrientation.preprocess(tweet['text'])
                               if term not in stop
                               and not term.startswith(('#', '@'))]
-                print('All terms ' )
+                print('All terms ')
                 print(terms_only)
 
                 # Build co-occurrence matrix
@@ -150,7 +145,6 @@ class SemanticOrientation():
                 autolabel(rects1)
 
                 plt.show()
-
 
                 # n_docs is the total n. of tweets
                 p_t = terms_all

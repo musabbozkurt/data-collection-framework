@@ -12,7 +12,7 @@ from sklearn.model_selection import cross_val_predict
 from sklearn.model_selection import cross_val_score
 from sklearn.naive_bayes import MultinomialNB
 
-from DM import TokenizationTweet
+from DM.TokenizationTweet import TokenizationTweet
 
 
 class TermFrequency:
@@ -24,19 +24,17 @@ class TermFrequency:
         seen = set()
         seen_add = seen.add
         return [x for x in myList if not (x in seen or seen_add(x))]
-    def termfreq(fpath):
+    def termfreq(fpath, numofFold, numofsplit, testSize, randomState, testSizeforTraintest, cforKernel):
         classLabels = []
         fileNames = []
         for subdir, dirs, files in os.walk(fpath):
             for file in files:
                 file_path = subdir + os.path.sep + file
-                file_content = open(file_path).read()
-                # NGrams.ngrams(file_content, 2)
                 fileNames.append(file_path)
                 classLabels.append(subdir[15:])
         tfidf = TfidfVectorizer(tokenizer=TokenizationTweet.tokenize, preprocessor=TermFrequency.preprocess, lowercase=True)
         # tfidf = TfidfVectorizer(tokenizer=TokenizationTextFile.tokenTextFile, preprocessor=TermFrequency.preprocess,lowercase=True)
-        docTermMatrix = tfidf.fit_transform((open(f).read() for f in fileNames))
+        docTermMatrix = tfidf.fit_transform((open(f,encoding = "ISO-8859-1").read() for f in fileNames))
 
         print(docTermMatrix.shape)
         print(classLabels)
@@ -57,7 +55,7 @@ class TermFrequency:
         print(cm)
 
         # train-test split 60%-40%
-        X_train, X_test, y_train, y_test = cross_validation.train_test_split(docTermMatrix, classLabels, test_size=0.4,random_state=0)
+        X_train, X_test, y_train, y_test = cross_validation.train_test_split(docTermMatrix, classLabels, test_size=testSizeforTraintest,random_state=randomState)
 
         classifier = MultinomialNB().fit(X_train, y_train)
         predictions = classifier.predict(X_test)
@@ -79,8 +77,8 @@ class TermFrequency:
         print(X.shape, y.shape, X2.shape, y2.shape)
 
         # support vector machines sklearn svc is one of the classfiers
-        clf = svm.SVC(kernel='linear', C=1)
-        scores = cross_val_score(clf, docTermMatrix, classLabels, cv=10)
+        clf = svm.SVC(kernel='linear', C=cforKernel)
+        scores = cross_val_score(clf, docTermMatrix, classLabels, cv=numofFold)
         print('scores : ', scores)
 
         mean_score = scores.mean()
@@ -96,13 +94,12 @@ class TermFrequency:
         print('95 percent probability that if this experiment were repeated over and over the average score would be between %f and %f' % (lower_bound, upper_bound))
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
-        scores = cross_val_score(clf, docTermMatrix, classLabels, cv=15, scoring='f1_macro')
+        scores = cross_val_score(clf, docTermMatrix, classLabels, cv=numofFold, scoring='f1_macro')
 
         # test accuracy 1 0 arasi
         print('f1_macro scoring : ', scores)
-        n_samples = docTermMatrix.shape[0]
-        cv = ShuffleSplit(n_splits=10, test_size=0.3, random_state=0)
+        cv = ShuffleSplit(n_splits=numofsplit, test_size=testSize, random_state=randomState)
 
         print(cross_val_score(clf, docTermMatrix, classLabels, cv=cv))
-        predicted = cross_val_predict(clf, docTermMatrix, classLabels, cv=10)
-        print('10-fold cross validation : ', metrics.accuracy_score(classLabels, predicted))
+        predicted = cross_val_predict(clf, docTermMatrix, classLabels, cv=numofFold)
+        print(str(numofFold)+'-fold cross validation : ', metrics.accuracy_score(classLabels, predicted))

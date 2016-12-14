@@ -16,7 +16,6 @@ from DM import Logging
 
 
 class Analysis():
-    numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
     # in this  function analysis of languages from text file which contains json data of tweets
     # it means plot top numbOfBar tweet language
     def lang_analiz(self,filepath,numOfBar):
