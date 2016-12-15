@@ -197,7 +197,7 @@ while loop:  ## While loop which will keep going until loop = False
             print("Error: %s" % e)
             Logging.log(str(e))
     elif choice == 5:
-        try:
+
             mongodbName = input("Please enter database name to store : ")
             mongodbCollectionName = input("Please enter collection name inside database : ")
             fileName = input("Please enter file name : ")
@@ -210,10 +210,11 @@ while loop:  ## While loop which will keep going until loop = False
             auth.set_access_token(conf.access_key, conf.access_secret)
             api = tweepy.API(auth)
 
-            import datetime
-            now = datetime.datetime.now()
-            print(datetime.datetime.strptime(now.strftime('%Y-%m-%d'), '%Y-%m-%d'))
-            date = input("enter date which is greater than " + now.strftime('%Y-%m-%d') + " : ")
+            from datetime import datetime
+            fmt = '%Y-%m-%d %H:%M:%S'
+            now = datetime.strptime(datetime.now().strftime(fmt), fmt)
+            print(now)
+            date = input("Enter date which is greater than " + now.strftime(fmt) + " which is current time : ")
             print(date)
 
             a = input("Enter a word, hashtag or something else or type STOP to start colleting tweets: ")
@@ -227,7 +228,7 @@ while loop:  ## While loop which will keep going until loop = False
             stream = Stream(auth,CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
             stream.filter(track=sentence)
 
-        except:
+
             import sys
             e = sys.exc_info()[1]
             print("Error: %s" % e)
