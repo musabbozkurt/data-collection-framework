@@ -1,6 +1,7 @@
 
-#
+#this class collecting users followers
 class FollowerCollector():
+    #this method writes users followers to the file and file name is named by screen name of the user
     def write_on_file(self,screenname):
         from DM.AllVariableClass import AllVariableClass
         from DM import Logging

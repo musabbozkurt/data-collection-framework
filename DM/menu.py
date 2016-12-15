@@ -200,21 +200,32 @@ while loop:  ## While loop which will keep going until loop = False
         try:
             mongodbName = input("Please enter database name to store : ")
             mongodbCollectionName = input("Please enter collection name inside database : ")
-            fileName=input("Please enter file name : ")
+            fileName = input("Please enter file name : ")
 
-            a = input("Enter a word, hashtag or something else or type stop to exit: ")
+            import tweepy
+            from DM import ConfigParser as conf
+            from DM.CustomStreamListener import CustomStreamListener
+
+            auth = tweepy.OAuthHandler(conf.consumer_key, conf.consumer_secret)
+            auth.set_access_token(conf.access_key, conf.access_secret)
+            api = tweepy.API(auth)
+
+            import datetime
+            now = datetime.datetime.now()
+            print(datetime.datetime.strptime(now.strftime('%Y-%m-%d'), '%Y-%m-%d'))
+            date = input("enter date which is greater than " + now.strftime('%Y-%m-%d') + " : ")
+            print(date)
+
+            a = input("Enter a word, hashtag or something else or type STOP to start colleting tweets: ")
             sentence = []
             while a != ("stop"):
                 sentence.append(a)
-                a = input("Enter a word, hashtag or something else or type stop to exit: ")
+                a = input("Enter a word, hashtag or something else or type STOP to start colleting tweets: ")
             print(sentence)
 
-            from DM.CustomStreamListener import CustomStreamListener
-            from DM.AllVariableClass import AllVariableClass
-
-            csl = CustomStreamListener(AllVariableClass.api)
-
-            csl.on_sapi(sentence)
+            from tweepy import Stream
+            stream = Stream(auth,CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
+            stream.filter(track=sentence)
 
         except:
             import sys

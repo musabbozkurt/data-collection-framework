@@ -1,40 +1,52 @@
-# stremaming class collect tweets according to keywords which are in the array
+import datetime
 import pymongo
-import tweepy
-
-from DM.AllVariableClass import AllVariableClass
-from DM.menu import mongodbName, mongodbCollectionName,fileName
-
-from DM import ConfigParser
+from tweepy.streaming import StreamListener
 from DM import Logging
+from DM import ConfigParser
 
-class CustomStreamListener(tweepy.StreamListener):
-    stweets = []
-    def __init__(self, api):
-        self.api = api
-        super(tweepy.StreamListener, self).__init__()
+#this class helps us to use streaming API according to given date
+class CustomStreamListener(StreamListener):
+    def __init__(self, api, mongodbName, mongodbCollectionName, fileName, datenow, date2):
+        self.api=api
+        super(CustomStreamListener, self).__init__()
+        #initializing our database name which is given by users as an input
+        self.mongodbName=mongodbName
+        #initializing our collection name which is given by users as an input
+        self.mongodbCollectionName=mongodbCollectionName
+        ##initializing our file name which is given by users as an input.
+        #this file will contains tweets which will be collected from Streaming API
+        self.fileName=fileName
+        #we need datenow variable to get current time as hour and minute
+        #  with year-month-day for example 2016-12-15 14:00
+        self.datenow=datenow
+        #we will use date2 variable as parameter which will be given by users
+        # just like datenow variable
+        self.date2=date2
+    #this function controlling Streaming API according to date and adds our tweets into mongoDB
+    def on_status(self, status):
+        #this record variable will have some fields from tweets json
+        record = {'Text': status.text, 'Created At': status.created_at}
+        print(record)
+        #this if statement is controlling Streaming API according to date
+        if self.datenow<datetime.datetime.strptime(self.date2 , '%Y-%m-%d %H:%M'):
+            # See Tweepy documentation to learn how to access other fields
+            self.db = pymongo.MongoClient().__getattr__(self.mongodbName).__getattr__(self.mongodbCollectionName).insert(record)
+            Logging.log(self.mongodbName + " database has been created. and insertion get started")
+            Logging.log("Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
+            Logging.log("Tweets which are collecting from Streaming API added to " + self.mongodbCollectionName + " inside " + self.mongodbName + "mongodb database")
+            return True
+        else:
+            return False
+    #these message below will occur if Streaming API interrupts or limited or timeout
+    def on_error(self, status):
+        print ('Error on status', status)
+        Logging.log('Error on status'+status)
 
-    def on_data(self, tweet):
-        self.db = pymongo.MongoClient().__getattr__(mongodbName).__getattr__(mongodbCollectionName)
-        Logging.log(mongodbName+" database has been created.")
-        with open(ConfigParser.streamingTxtFile+fileName, 'a') as tf:
-            tf.write(tweet)
-            import json
-            self.db.insert(json.loads(tweet))
-        Logging.log("Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
-        Logging.log("Tweets which are collecting from Streaming API added to mongodb ")
-        return True
+    def on_limit(self, status):
+        print ('Limit threshold exceeded', status)
+        Logging.log('Limit threshold exceeded', status)
 
-    def on_sapi(self,stwets):
-        sapi = tweepy.streaming.Stream(AllVariableClass.auth, CustomStreamListener(AllVariableClass.api))
-        sapi.filter(track=stwets)
-        Logging.log("Getting Tweets json from Streaming API")
+    def on_timeout(self, status):
+        print ('Stream disconnected; continuing...')
+        Logging.log('Stream disconnected; continuing...')
 
-    def on_error(self, status_code):
-        print("we have error")
-        Logging.log("Don't kill the stream here status code : " + status_code)
-        return True # Don't kill the stream
-
-    def on_timeout(self):
-        Logging.log("Don't kill the stream on timeouts")
-        return True # Don't kill the stream
