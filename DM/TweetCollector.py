@@ -40,7 +40,7 @@ class TweetCollector():
 
                     print ("...%s tweets downloaded so far" % (len(alltweets)))
                     if (len(alltweets)) >= input:
-                        Logging.log(str(input)+" tweets have been collected")
+                        Logging.log(str(input)+" tweets have been collected from "+str(screen_name)+" timeline")
                         break
                 #write tweets to the txt files
                 for tweet in alltweets:
@@ -54,7 +54,7 @@ class TweetCollector():
 
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
-                Logging.log(str(e))
+                Logging.log(str(screen_name)+" "+str(e))
                 pass
 
         def on_error(self, status_code):
