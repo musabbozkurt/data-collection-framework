@@ -39,7 +39,7 @@ while loop:  ## While loop which will keep going until loop = False
                                 for word in line.split():
                                     tweetcollect.get_all_tweets(word, numberOfTweet)
 
-                        cont = input("Do you want to give a username list with file path? yes/no > ")
+                        cont = input("\nType any key to exit this option \n ")
                 elif cont == "no":
                         username=input("Please enter username : ")
                         numberOfTweet = int(input("How many tweets do you want to collect? : "), 10)

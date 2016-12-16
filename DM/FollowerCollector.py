@@ -11,7 +11,14 @@ class FollowerCollector():
         try:
             for follower in allclassvar.api.followers_ids(screenname):
                 with open(ConfigParser.filePathForFollowersOutputs + screenname + ".txt", "a") as f:
-                    f.write(allclassvar.api.get_user(follower).screen_name + ' \n')
+                    try:
+                        f.write(allclassvar.api.get_user(follower).screen_name + ' \n')
+                    except:
+                        import sys
+                        e = sys.exc_info()[1]
+                        print("Error: %s" % e)
+                        Logging.log(str(e))
+                        pass
             Logging.log("FollowerCollector is collected followers of " + screenname + " and added to " + screenname + ".txt")
         except:
             e = sys.exc_info()[0]
