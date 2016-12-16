@@ -1,14 +1,14 @@
 ## Text menu in Python
 
 def print_menu():  ## Your menu design here
-    print(30 * "-", "WELCOME TO DATA COLLECTİON FRAMEWORK", 30 * "-")
+    print(30 * "-", "WELCOME TO DATA COLLECTION FRAMEWORK", 30 * "-")
     print("1. Tweet Collector according to username list or username")
     print("2. Follower collector according to username list or username")
-    print("3. Store your data to Mongo Database")
-    print("4. Analysis of collected tweets")
+    print("3. Store your data to Mongo Database make sure your path is okay or change it from config file")
+    print("4. Analysis of collected tweets for example plots which languages are used in text of tweets")
     print("5. Custom stream listener from Streaming API")
-    print("6. Find Term frequency")
-    print("7. Semantic orientation of tweets json which are collected from Streaming API")
+    print("6. Find Cross validation and f1 macro scoring")
+    print("7. Find Term Frequency, the most common tokens, stop word, all Hastags etc...")
     print("8. Exit")
     print(67 * "-")
 loop = True
@@ -39,7 +39,7 @@ while loop:  ## While loop which will keep going until loop = False
                                 for word in line.split():
                                     tweetcollect.get_all_tweets(word, numberOfTweet)
 
-                        cont = input("\nType any key to continue \n ")
+                        cont = input("\nType any key to cont \n ")
                 elif cont == "no":
                         username=input("Please enter username : ")
                         numberOfTweet = int(input("How many tweets do you want to collect? : "), 10)
@@ -235,15 +235,15 @@ while loop:  ## While loop which will keep going until loop = False
             Logging.log(str(e))
     elif choice == 6:
         try:
-            from DM.TermFrequency import TermFrequency
+            from DM.CrossValidation import TermFrequency
             tf = TermFrequency
             from DM import ConfigParser
 
-            numofFold = int(input("Enter N for cross validation? : "), 10)
+            numofFold = int(input("Enter number for N for cross validation? : "), 10)
             Logging.log("N for cross validation "+str(numofFold))
             numofsplit = int(input("Enter number of split? : "), 10)
             Logging.log("number of split " + str(numofsplit))
-            testSize = float(input("Enter number for test size between 0 and 1? : "))
+            testSize = float(input("Enter number for test size between 0 and 1? it might be 0.3 : "))
             Logging.log("number for test size between 0 and 1 " + str(testSize))
             randomState = int(input("Enter random state you might enter 0(zero)? : "), 10)
             Logging.log("random state " + str(randomState))
@@ -262,16 +262,16 @@ while loop:  ## While loop which will keep going until loop = False
         ## You can add your code or functions here
     elif choice == 7:
         try:
-            from DM.SemanticOrientation import SemanticOrientation
+            from DM.TermFreqAndAllTerms import TermFreqAndAllTerms
             from DM import ConfigParser
 
-            inputforMostCommon=int(input("Enter number to display most common : "))
-            termMax=int(input("Enter number to top of maximum term : "))
+            inputforMostCommon=int(input("Enter number to display the most frequent words (or tokens), are not exactly meaningful: "))
+            termMax=int(input("Enter number to print top of maximum term : "))
 
-            a = input("Enter a word, hashtag or something else or type stop to exit: ")
+            a = input("Enter a word, hashtag or something else to find Co-occurrence or type stop to exit: ")
 
-            SemanticOrientation.term_counter(ConfigParser.streamingTxtFile,inputforMostCommon)
-            SemanticOrientation.semantic(a, ConfigParser.streamingTxtFile,inputforMostCommon,termMax)
+            TermFreqAndAllTerms.term_counter(ConfigParser.streamingTxtFile, inputforMostCommon)
+            TermFreqAndAllTerms.semantic(a, ConfigParser.streamingTxtFile, inputforMostCommon, termMax)
 
         except:
             import sys

@@ -4,7 +4,7 @@ configParser = configparser.RawConfigParser()
 configFilePath = r'/Users/musabbozkurt/Documents/PycharmProjects/DM/2016_Jan_CSE498_Graduation.config'
 configParser.read(configFilePath)
 
-filePathForOutputs = configParser.get('your-config', 'filePathForOutputs')
+filePathForTimelineOutputs = configParser.get('your-config', 'filePathForTimelineOutputs')
 #print(filePathForOutputs)
 
 filePathForFollowersOutputs = configParser.get('your-config', 'filePathForFollowersOutputs')
@@ -40,8 +40,29 @@ streamingdb = configParser.get('your-config', 'streamingdb')
 emoticons_str = configParser.get('your-config', 'emoticons_str')
 #print(emoticons_str)
 
-regex_str = configParser.get('your-config', 'regex_str')
-#print(regex_str)
+HTML_tags = configParser.get('your-config', 'HTML_tags')
+#print(HTML_tags)
+
+mentions = configParser.get('your-config', 'mentions')
+#print(mentions)
+
+hash_tags = configParser.get('your-config', 'hash_tags')
+#print(hash_tags)
+
+URLs = configParser.get('your-config', 'URLs')
+#print(URLs)
+
+numbers = configParser.get('your-config', 'numbers')
+#print(numbers)
+
+words_with = configParser.get('your-config', 'words_with')
+#print(words_with)
+
+other_words = configParser.get('your-config', 'other_words')
+#print(other_words)
+
+anything_else = configParser.get('your-config', 'anything_else')
+#print(anything_else)
 
 positive_vocab = configParser.get('your-config', 'positive_vocab')
 #print(positive_vocab)

@@ -44,7 +44,7 @@ class TweetCollector():
                         break
                 #write tweets to the txt files
                 for tweet in alltweets:
-                    f = open(ConfigParser.filePathForOutputs + screen_name + ".txt", "a")
+                    f = open(ConfigParser.filePathForTimelineOutputs + screen_name + ".txt", "a")
                     f.write(json.dumps(tweet._json) + "\n")
                 print(screen_name+"'s tweets added to file")
                 Logging.log("Tweets have been added to " + screen_name + ".txt")

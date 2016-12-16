@@ -9,4 +9,4 @@ class NGrams():
             g = ' '.join(input[i:i + n])
             output.setdefault(g, 0)
             output[g] += 1
-        #print(output)
+            #print(g)

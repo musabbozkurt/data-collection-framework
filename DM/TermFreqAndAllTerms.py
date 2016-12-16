@@ -12,10 +12,10 @@ from nltk.corpus import stopwords
 from DM import ConfigParser
 
 
-class SemanticOrientation():
+class TermFreqAndAllTerms():
     emoticons_str = ConfigParser.emoticons_str
     regex_str = [emoticons_str,
-    r'<[^>]+>',  # HTML tags
+    ConfigParser.HTML_tags,  # HTML tags
     r'(?:@[\w_]+)',  # @-mentions
     r"(?:\#+[\w_]+[\w\'_\-]*[\w_]+)",  # hash-tags
     r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+',  # URLs
@@ -33,9 +33,9 @@ class SemanticOrientation():
     emoticon_re = re.compile(r'^' + emoticons_str + '$', re.VERBOSE | re.IGNORECASE)
 
     def preprocess(s, lowercase=False):
-        tokens = SemanticOrientation.tokens_re.findall(s)
+        tokens = TermFreqAndAllTerms.tokens_re.findall(s)
         if lowercase:
-            tokens = [token if SemanticOrientation.emoticon_re.search(token) else token.lower() for token in tokens]
+            tokens = [token if TermFreqAndAllTerms.emoticon_re.search(token) else token.lower() for token in tokens]
         return tokens
 
     def term_counter(fname, inputforMostcommon):
@@ -45,17 +45,18 @@ class SemanticOrientation():
             for line in f:
                 tweet = json.loads(line)
                 # Create a list with all the terms
-                terms_all = [term for term in SemanticOrientation.preprocess(tweet['text'])]
+                terms_all = [term for term in TermFreqAndAllTerms.preprocess(tweet['text'])]
                 # Update the counter
                 count_all.update(terms_all)
             # Print the first 5 most frequent words
             # print(count_all)
             print('FIRST ' + str(inputforMostcommon)+' MOST FREQUENT WORDS ARE BELOW')
+            print("The most frequent words (or should I say, tokens), are not exactly meaningful.")
             print(count_all.most_common(inputforMostcommon))
 
         punctuation = list(string.punctuation)
         stop = stopwords.words('english') + punctuation + ['rt', 'via']
-        terms_stop = [term for term in SemanticOrientation.preprocess(tweet['text']) if term not in stop]
+        terms_stop = [term for term in TermFreqAndAllTerms.preprocess(tweet['text']) if term not in stop]
         print('ALL STOP TERMS ARE BELOW ')
         print(terms_stop)
 
@@ -65,13 +66,13 @@ class SemanticOrientation():
         print(terms_single)
 
         # Count hashtags only
-        terms_hash = [term for term in SemanticOrientation.preprocess(tweet['text'])
+        terms_hash = [term for term in TermFreqAndAllTerms.preprocess(tweet['text'])
                       if term.startswith('#')]
         print('ALL HASHTAG TERMS ARE BELOW. ')
         print(terms_hash)
 
         # Count terms only (no hashtags, no mentions)
-        terms_only = [term for term in SemanticOrientation.preprocess(tweet['text'])
+        terms_only = [term for term in TermFreqAndAllTerms.preprocess(tweet['text'])
                       if term not in stop and
                       not term.startswith(('#', '@'))]
 
@@ -93,10 +94,10 @@ class SemanticOrientation():
             for line in f:
                 tweet = json.loads(line)
                 # Create a list with all the terms
-                terms_all = [term for term in SemanticOrientation.preprocess(tweet['text'])]
+                terms_all = [term for term in TermFreqAndAllTerms.preprocess(tweet['text'])]
                 # Update the counter
                 count_all.update(terms_all)
-                terms_only = [term for term in SemanticOrientation.preprocess(tweet['text'])
+                terms_only = [term for term in TermFreqAndAllTerms.preprocess(tweet['text'])
                               if term not in stop
                               and not term.startswith(('#', '@'))]
                 print('ALL TERMS ARE BELOW')
@@ -126,7 +127,7 @@ class SemanticOrientation():
                 count_search = Counter()
                 for line in f:
                     tweet = json.loads(line)
-                    terms_only = [term for term in SemanticOrientation.preprocess(tweet['text'])
+                    terms_only = [term for term in TermFreqAndAllTerms.preprocess(tweet['text'])
                                   if term not in stop
                                   and not term.startswith(('#', '@'))]
                     if search_word in terms_only:
