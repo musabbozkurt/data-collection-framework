@@ -197,7 +197,7 @@ while loop:  ## While loop which will keep going until loop = False
             print("Error: %s" % e)
             Logging.log(str(e))
     elif choice == 5:
-
+        try:
             mongodbName = input("Please enter database name to store : ")
             mongodbCollectionName = input("Please enter collection name inside database : ")
             fileName = input("Please enter file name : ")
@@ -228,7 +228,7 @@ while loop:  ## While loop which will keep going until loop = False
             stream = Stream(auth,CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
             stream.filter(track=sentence)
 
-
+        except:
             import sys
             e = sys.exc_info()[1]
             print("Error: %s" % e)

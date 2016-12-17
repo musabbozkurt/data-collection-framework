@@ -29,16 +29,17 @@ class CustomStreamListener(StreamListener):
         fmt = '%Y-%m-%d %H:%M:%S'
         from datetime import datetime
         #this if statement is controlling Streaming API according to date
-        if ((datetime.strptime(self.date2 , fmt)-self.datenow).days*24*60!=0) \
-                and ((datetime.strptime(self.date2 , fmt)-self.datenow).days*24*60>0):
-            print((datetime.strptime(self.date2 , fmt)-self.datenow).days*24*60)
+        if ((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds()!=0) \
+                and ((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds()>0):
+            print((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds())
+            self.datenow=datetime.strptime(datetime.now().strftime(fmt), fmt)
             # See Tweepy documentation to learn how to access other fields
             self.db = pymongo.MongoClient().__getattr__(self.mongodbName).__getattr__(self.mongodbCollectionName).insert(record)
             Logging.log(self.mongodbName + " database has been created. and insertion get started")
             Logging.log("Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
             Logging.log("Tweets which are collecting from Streaming API added to " + self.mongodbCollectionName + " inside " + self.mongodbName + "mongodb database")
             return True
-        elif((datetime.strptime(self.date2 , fmt)-self.datenow).days*24*60<=0):
+        elif((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds()<=0):
             print((datetime.strptime(self.date2, fmt) - self.datenow).days)
             Logging.log("you have finished ")
             return False
