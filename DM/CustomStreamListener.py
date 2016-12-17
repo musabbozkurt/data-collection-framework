@@ -23,30 +23,35 @@ class CustomStreamListener(StreamListener):
         self.date2=date2
     #this function controlling Streaming API according to date and adds our tweets into mongoDB
     def on_status(self, status):
-        #this record variable will have some fields from tweets json
-        record = {'Text': status.text, 'Created At': status.created_at}
-        print(record)
-        fmt = '%Y-%m-%d %H:%M:%S'
-        from datetime import datetime
-        #this if statement is controlling Streaming API according to date
-        if ((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds()!=0) \
-                and ((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds()>0):
-            print((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds())
-            self.datenow=datetime.strptime(datetime.now().strftime(fmt), fmt)
-            # See Tweepy documentation to learn how to access other fields
-            self.db = pymongo.MongoClient().__getattr__(self.mongodbName).__getattr__(self.mongodbCollectionName).insert(record)
-            Logging.log(self.mongodbName + " database has been created. and insertion get started")
-            Logging.log("Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
-            Logging.log("Tweets which are collecting from Streaming API added to " + self.mongodbCollectionName + " inside " + self.mongodbName + "mongodb database")
-            return True
-        elif((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds()<=0):
-            print((datetime.strptime(self.date2, fmt) - self.datenow).days)
-            Logging.log("you have finished ")
-            return False
-        else:
-            print((datetime.strptime(self.date2, fmt) - self.datenow).days)
-            print("asdlkjasdjkalsd")
-            return False
+        try:
+            fmt = '%Y-%m-%d %H:%M:%S'
+            from datetime import datetime
+            #this if statement is controlling Streaming API according to date
+            if ((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds()!=0) \
+                    and ((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds()>0):
+                # this record variable will have some fields from tweets json
+                record = {'Text': status.text, 'Created At': status.created_at}
+                print(record)
+                print(str((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds())+" seconds left to cut the connection")
+                self.datenow=datetime.strptime(datetime.now().strftime(fmt), fmt)
+                # See Tweepy documentation to learn how to access other fields
+                self.db = pymongo.MongoClient().__getattr__(self.mongodbName).__getattr__(self.mongodbCollectionName).insert(record)
+                Logging.log(self.mongodbName + " database has been created. and insertion get started")
+                Logging.log("Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
+                Logging.log("Tweets which are collecting from Streaming API added to " + self.mongodbCollectionName + " inside " + self.mongodbName + "mongodb database")
+                return True
+            elif((datetime.strptime(self.date2 , fmt)-self.datenow).total_seconds()<=0):
+                print((datetime.strptime(self.date2, fmt) - self.datenow).total_seconds())
+                Logging.log("you have finished collecting")
+                print("you have finished collecting")
+                return False
+            else:
+                return False
+        except:
+            import sys
+            e = sys.exc_info()[1]
+            print("Error: %s" % e)
+            Logging.log(str(e))
     #these message below will occur if Streaming API interrupts or limited or timeout
     def on_error(self, status):
         print ('Error on status', status)
