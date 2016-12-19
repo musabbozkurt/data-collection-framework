@@ -64,4 +64,3 @@ class CustomStreamListener(StreamListener):
     def on_timeout(self, status):
         print ('Stream disconnected; continuing...')
         Logging.log('Stream disconnected; continuing...')
-
