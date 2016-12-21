@@ -17,7 +17,7 @@ class TweetCollector():
                 alltweets = []
 
                 #make initial request for most recent tweets (200 is the maximum allowed count)
-                new_tweets = allclassvar.api.user_timeline(screen_name = screen_name, count=200)
+                new_tweets = allclassvar.api.user_timeline(screen_name = screen_name, count=input/2)
 
                 #save most recent tweets
                 alltweets.extend(new_tweets)
@@ -30,7 +30,7 @@ class TweetCollector():
                     print ("getting tweets before %s" % (oldest))
 
                     #all subsiquent requests use the max_id param to prevent duplicates
-                    new_tweets = allclassvar.api.user_timeline(screen_name = screen_name, count=200, max_id=oldest)
+                    new_tweets = allclassvar.api.user_timeline(screen_name = screen_name, count=input/2, max_id=oldest)
 
                     #save most recent tweets
                     alltweets.extend(new_tweets)
@@ -41,14 +41,14 @@ class TweetCollector():
                     print ("...%s tweets downloaded so far" % (len(alltweets)))
                     if (len(alltweets)) >= input:
                         Logging.log(str(input)+" tweets have been collected from "+str(screen_name)+" timeline")
-                        break
-                #write tweets to the txt files and mongodb database.
-                for tweet in alltweets:
-                    f = open(ConfigParser.filePathForTimelineOutputs + screen_name + ".txt", "a")
-                    f.write(json.dumps(tweet._json) + "\n")
-                    import pymongo
-                    self.db = pymongo.MongoClient().__getattr__(mongodbName).__getattr__(screen_name).insert(tweet._json)
 
+                        #write tweets to the txt files and mongodb database.
+                        for tweet in alltweets:
+                            f = open(ConfigParser.filePathForTimelineOutputs + screen_name + ".txt", "a")
+                            f.write(json.dumps(tweet._json) + "\n")
+                            import pymongo
+                            self.db = pymongo.MongoClient().__getattr__(mongodbName).__getattr__(screen_name).insert(tweet._json)
+                        break
                 print(screen_name+"'s tweets added to file")
                 Logging.log("Tweets have been added to " + screen_name + ".txt")
                 pass
