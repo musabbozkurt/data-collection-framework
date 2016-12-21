@@ -7,12 +7,11 @@ class FollowerCollector():
         from DM import Logging
         from DM import ConfigParser
         import sys
-        allclassvar=AllVariableClass()
         try:
-            for follower in allclassvar.api.followers_ids(screenname):
+            for follower in AllVariableClass.api.followers_ids(screenname):
                 with open(ConfigParser.filePathForFollowersOutputs + screenname + ".txt", "a") as f:
                     try:
-                        f.write(allclassvar.api.get_user(follower).screen_name + ' \n')
+                        f.write(AllVariableClass.api.get_user(follower).screen_name + ' \n')
                     except:
                         import sys
                         e = sys.exc_info()[1]
