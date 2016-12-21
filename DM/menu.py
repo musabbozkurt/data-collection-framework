@@ -25,7 +25,7 @@ while loop:  ## While loop which will keep going until loop = False
                 # your code
                 print("Type any key to exit this option")
                 cont = input("Do you want to give a username list with file path? yes/no > ")
-
+                mongodbName = input("Please enter database name: ")
                 from DM import ConfigParser
                 from DM.TweetCollector import TweetCollector
 
@@ -37,13 +37,13 @@ while loop:  ## While loop which will keep going until loop = False
                         with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
                             for line in f:
                                 for word in line.split():
-                                    tweetcollect.get_all_tweets(word, numberOfTweet)
+                                    tweetcollect.get_all_tweets(word, numberOfTweet,mongodbName)
 
                         cont = input("\nType any key to cont \n ")
                 elif cont == "no":
                         username=input("Please enter username : ")
                         numberOfTweet = int(input("How many tweets do you want to collect? : "), 10)
-                        tweetcollect.get_all_tweets(username, numberOfTweet)
+                        tweetcollect.get_all_tweets(username, numberOfTweet,mongodbName)
                 else:
                     loop2=False
                     print("You have exited from tweet collector succesfully...")

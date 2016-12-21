@@ -2,7 +2,7 @@
 # getting all tweets in users timeline according to their username.
 
 class TweetCollector():
-        def get_all_tweets(self,screen_name,input):
+        def get_all_tweets(self,screen_name,input,mongodbName):
             try:
                 import json
 
@@ -42,10 +42,13 @@ class TweetCollector():
                     if (len(alltweets)) >= input:
                         Logging.log(str(input)+" tweets have been collected from "+str(screen_name)+" timeline")
                         break
-                #write tweets to the txt files
+                #write tweets to the txt files and mongodb database.
                 for tweet in alltweets:
                     f = open(ConfigParser.filePathForTimelineOutputs + screen_name + ".txt", "a")
                     f.write(json.dumps(tweet._json) + "\n")
+                    import pymongo
+                    self.db = pymongo.MongoClient().__getattr__(mongodbName).__getattr__(screen_name).insert(tweet._json)
+
                 print(screen_name+"'s tweets added to file")
                 Logging.log("Tweets have been added to " + screen_name + ".txt")
                 pass
