@@ -26,8 +26,8 @@ class TermFreqAndAllTerms():
     r'(?:\S)'  # anything else
                  ]
 
-    print(regex_str)
-    print(emoticons_str)
+    #print(regex_str)
+    #print(emoticons_str)
 
     tokens_re = re.compile(r'(' + '|'.join(regex_str) + ')', re.VERBOSE | re.IGNORECASE)
     emoticon_re = re.compile(r'^' + emoticons_str + '$', re.VERBOSE | re.IGNORECASE)
