@@ -219,14 +219,15 @@ while loop:  ## While loop which will keep going until loop = False
 
             a = input("Enter a word, hashtag or something else or type STOP to start colleting tweets: ")
             sentence = []
-            while a != ("stop"):
-                sentence.append(a)
-                a = input("Enter a word, hashtag or something else or type STOP to start colleting tweets: ")
+            #while a != ("stop"):
+            sentence.append(a)
+            #    a = input("Enter a word, hashtag or something else or type STOP to start colleting tweets: ")
             print(sentence)
+            print(conf.wordListForStreaming)
 
             from tweepy import Stream
             stream = Stream(auth,CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
-            stream.filter(track=sentence)
+            stream.filter(track=conf.wordListForStreaming)
 
         except:
             import sys
