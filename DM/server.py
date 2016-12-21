@@ -36,7 +36,7 @@ while True:
     conn, addr = s.accept()
 
     print ('New connection from %s:%d' % (addr[0], addr[1]))
-    data = conn.recv(socksize)
+    data = conn.recv(socksize).decode("UTF-8")
     jsonResponse=(json.loads(data))
     print(jsonResponse)
 
@@ -53,22 +53,19 @@ while True:
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
-        count=0
-        conn.send(str(count))
-        print("server works: data="+data)
+        conn.send(b'I did your job bro')
     elif (jsonResponse['msg0'])=="collecttweetfromusername":
         try:
             tweetcollect = TweetCollector()
             username = jsonResponse['msg1']
-            numberOfTweet = jsonResponse['msg2']
-            tweetcollect.get_all_tweets(username, numberOfTweet)
+            numberOfTweet = int(jsonResponse['msg2'])
+            tweetcollect.get_all_tweets(username, int(numberOfTweet))
 
         except:
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
     elif (jsonResponse['msg0']) == 'collectfollowerfromuserlist':
         try:
             followercollect = FollowerCollector()
@@ -80,8 +77,7 @@ while True:
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="collectfollowerfromusername":
         try:
@@ -93,8 +89,7 @@ while True:
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="storedata":
         try:
@@ -108,69 +103,60 @@ while True:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotlanguage":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.lang_analiz(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotcountry":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.country_analiz(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotlocation":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.location_analiz(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plottimezone":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.timezone_analiz(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plottweet":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.tweet(ConfigParser.filepathformongo, numberOfBar)
 
         except:
@@ -184,142 +170,122 @@ while True:
     elif (jsonResponse['msg0'])=="plottweetcreatedat":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.create_at(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotuserid":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.user_id(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotstringofid":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.id_str(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotusername":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.username(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotscreenname":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.screename(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotfollowerscount":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.followers_count(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotfriendscount":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.friends_count(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotuserlanguage":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.user_lang(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotretweet":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.retweet_count(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="plotfavourite":
         try:
                 analysis = Analysis()
-                numberOfBar = jsonResponse['msg1']
+                numberOfBar = int(jsonResponse['msg1'])
                 analysis.favorite_count(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="stream":
         try:
@@ -352,19 +318,51 @@ while True:
                 e = sys.exc_info()[1]
                 print("Error: %s" % e)
                 Logging.log(str(e))
-
-        count=0
-        conn.send(str(count))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="crossvalidation":
-        #gerekli fonsiyon
-        count=0
-        conn.send(str(count))
+        try:
+            tf = TermFrequency
+
+            numofFold = int(jsonResponse['msg1'])
+            Logging.log("N for cross validation " + str(numofFold))
+
+            numofsplit = int(jsonResponse['msg2'])
+            Logging.log("number of split " + str(numofsplit))
+
+            testSize = float(jsonResponse['msg3'])
+            Logging.log("number for test size between 0 and 1 " + str(testSize))
+
+            randomState = int(jsonResponse['msg4'])
+            Logging.log("random state " + str(randomState))
+
+            testSizeforTraintest = float(jsonResponse['msg5'])
+            Logging.log("number for test size between 0 and 1 " + str(testSizeforTraintest))
+
+            cforKernel = int(jsonResponse['msg6'])
+            Logging.log("Number for C for kernel in svc " + str(cforKernel))
+
+            tf.termfreq(ConfigParser.filepathfortokenization, numofFold, numofsplit, testSize, randomState,
+                        testSizeforTraintest, cforKernel)
+        except:
+                e = sys.exc_info()[1]
+                print("Error: %s" % e)
+                Logging.log(str(e))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="termfrequency":
-        #gerekli fonsiyon
-        count=0
-        conn.send(str(count))
+        try:
+            inputforMostCommon = int(jsonResponse['msg1'])
+            termMax = int(jsonResponse['msg2'])
+            a = jsonResponse['msg3']
+
+            TermFreqAndAllTerms.term_counter(ConfigParser.streamingTxtFile, inputforMostCommon)
+            TermFreqAndAllTerms.semantic(a, ConfigParser.streamingTxtFile, inputforMostCommon, termMax)
+        except:
+                e = sys.exc_info()[1]
+                print("Error: %s" % e)
+                Logging.log(str(e))
+        conn.send(b'I did your job bro')
 
     elif (jsonResponse['msg0'])=="killserver":
         print("server is closed")
@@ -372,7 +370,6 @@ while True:
         break
     else:
         print("process is not recognized")
-    print(data)
-    conn.send(str("process is not recognized"))
+        conn.send(b'I did your job bro')
 
 #sys.exit()
