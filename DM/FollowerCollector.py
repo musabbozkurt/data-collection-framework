@@ -19,7 +19,7 @@ class FollowerCollector():
                         print("Error: %s" % e)
                         Logging.log(str(e))
                         pass
-            Logging.log("FollowerCollector is collected followers of " + screenname + " and added to " + screenname + ".txt")
+            Logging.log("FollowerCollector collected followers of " + screenname + " and added to " + screenname + ".txt")
         except:
             e = sys.exc_info()[0]
             print("Error: %s" % e)
