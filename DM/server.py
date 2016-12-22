@@ -48,7 +48,7 @@ while True:
             with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
                 for line in f:
                     for word in line.split():
-                        tweetcollect.get_all_tweets(word, numberOfTweet)
+                        tweetcollect.get_all_tweets(word, int(numberOfTweet),mongodbName='BigData1')
         except:
             e = sys.exc_info()[1]
             print("Error: %s" % e)
@@ -59,7 +59,7 @@ while True:
             tweetcollect = TweetCollector()
             username = jsonResponse['msg1']
             numberOfTweet = int(jsonResponse['msg2'])
-            tweetcollect.get_all_tweets(username, int(numberOfTweet))
+            tweetcollect.get_all_tweets(username, int(numberOfTweet),mongodbName='BigData1')
 
         except:
             e = sys.exc_info()[1]
@@ -287,7 +287,33 @@ while True:
                 Logging.log(str(e))
         conn.send(b'I did your job bro')
 
-    elif (jsonResponse['msg0'])=="stream":
+    elif (jsonResponse['msg0'])=="streamfromlist":
+        try:
+            from DM import ConfigParser as conf
+            mongodbName = jsonResponse['msg1']
+            mongodbCollectionName = jsonResponse['msg2']
+            fileName = jsonResponse['msg3']
+
+            auth = tweepy.OAuthHandler(conf.consumer_key, conf.consumer_secret)
+            auth.set_access_token(conf.access_key, conf.access_secret)
+            api = tweepy.API(auth)
+
+            fmt = '%Y-%m-%d %H:%M:%S'
+            now = datetime.strptime(datetime.now().strftime(fmt), fmt)
+            print(now)
+            date = jsonResponse['msg4']
+            print(date)
+
+            stream = Stream(auth,CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
+            stream.filter(track=conf.wordListForStreaming)
+
+        except:
+                e = sys.exc_info()[1]
+                print("Error: %s" % e)
+                Logging.log(str(e))
+        conn.send(b'I did your job bro')
+
+    elif (jsonResponse['msg0'])=="streamfrominput":
         try:
                 mongodbName = jsonResponse['msg1']
                 mongodbCollectionName = jsonResponse['msg2']
@@ -310,9 +336,6 @@ while True:
 
                 stream = Stream(auth,CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
                 stream.filter(track=sentence)
-
-
-                analysis.favorite_count(ConfigParser.filepathformongo, numberOfBar)
 
         except:
                 e = sys.exc_info()[1]
