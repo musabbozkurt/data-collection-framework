@@ -34,7 +34,7 @@ class TermFrequency:
                 classLabels.append(subdir[15:])
         tfidf = TfidfVectorizer(tokenizer=TokenizationTweet.tokenize, preprocessor=TermFrequency.preprocess, lowercase=True)
         # tfidf = TfidfVectorizer(tokenizer=TokenizationTextFile.tokenTextFile, preprocessor=TermFrequency.preprocess,lowercase=True)
-        docTermMatrix = tfidf.fit_transform((open(f,encoding = "utf-8").read() for f in fileNames))
+        docTermMatrix = tfidf.fit_transform((open(f,encoding = "ISO-8859-1").read() for f in fileNames))
 
         print(docTermMatrix.shape)
         print(classLabels)

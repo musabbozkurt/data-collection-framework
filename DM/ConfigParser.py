@@ -72,3 +72,5 @@ negative_vocab = configParser.get('your-config', 'negative_vocab')
 
 wordListForStreaming=configParser.get('your-config', 'wordListForStreaming')
 #print(wordListForStreaming)
+
+filePathForCrossVal=configParser.get('your-config', 'filePathForCrossVal')

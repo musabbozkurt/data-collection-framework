@@ -365,7 +365,7 @@ while True:
             cforKernel = int(jsonResponse['msg6'])
             Logging.log("Number for C for kernel in svc " + str(cforKernel))
 
-            tf.termfreq(ConfigParser.filepathfortokenization, numofFold, numofsplit, testSize, randomState,
+            tf.termfreq(ConfigParser.filePathForCrossVal, numofFold, numofsplit, testSize, randomState,
                         testSizeforTraintest, cforKernel)
         except:
                 e = sys.exc_info()[1]

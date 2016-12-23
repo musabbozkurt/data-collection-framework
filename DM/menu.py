@@ -253,7 +253,7 @@ while loop:  ## While loop which will keep going until loop = False
             cforKernel = int(input("Enter number for C for kernel in svc you might enter 1(one)? : "), 10)
             Logging.log("Number for C for kernel in svc " + str(cforKernel))
 
-            tf.termfreq(ConfigParser.filepathfortokenization,numofFold,numofsplit,testSize,randomState,testSizeforTraintest,cforKernel)
+            tf.termfreq(ConfigParser.filePathForCrossVal,numofFold,numofsplit,testSize,randomState,testSizeforTraintest,cforKernel)
 
         except:
             import sys
