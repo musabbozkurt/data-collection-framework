@@ -1,11 +1,13 @@
-installations
+Installations
 
--python3 or higher
+-python3 or higher version
 
 -mongodb database
 
 -xampp
 
--pycharm ide(any version)
+Recommended Installations
 
--robomongo(to display your database it is optional )
+-pycharm ide(any version it is optional but highly recommended)
+
+-robomongo(to display your database it is optional recommended)
