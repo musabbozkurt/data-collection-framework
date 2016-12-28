@@ -40,3 +40,7 @@ access_key =
 
 access_secret =
 
+
+# Changes in configParser.py
+
+enter 2016_Jan_CSE498_Graduation.config file path to configFilePath
