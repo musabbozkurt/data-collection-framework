@@ -48,7 +48,7 @@ while True:
             with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
                 for line in f:
                     for word in line.split():
-                        tweetcollect.get_all_tweets(word, int(numberOfTweet),mongodbName='BigData1')
+                        tweetcollect.get_all_tweets(word, int(numberOfTweet),mongodbName='CollectTweetFromUserList')
         except:
             e = sys.exc_info()[1]
             print("Error: %s" % e)
@@ -59,7 +59,7 @@ while True:
             tweetcollect = TweetCollector()
             username = jsonResponse['msg1']
             numberOfTweet = int(jsonResponse['msg2'])
-            tweetcollect.get_all_tweets(username, int(numberOfTweet),mongodbName='BigData1')
+            tweetcollect.get_all_tweets(username, int(numberOfTweet),mongodbName='CollectTweetFromUsername')
 
         except:
             e = sys.exc_info()[1]
