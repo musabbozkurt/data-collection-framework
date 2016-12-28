@@ -1,7 +1,7 @@
 import configparser
 
 configParser = configparser.RawConfigParser()
-configFilePath = r'/Users/musabbozkurt/Documents/PycharmProjects/DM/2016_Jan_CSE498_Graduation.config'
+configFilePath = r'/enter your config file path'
 configParser.read(configFilePath)
 
 filePathForTimelineOutputs = configParser.get('your-config', 'filePathForTimelineOutputs')
