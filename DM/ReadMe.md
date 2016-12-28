@@ -1,4 +1,4 @@
-***INSTALLATIONS
+# INSTALLATIONS
 
 -python3 or higher version
 
@@ -6,13 +6,13 @@
 
 -xampp
 
-***RECOMMENDED INSTALLATIONS
+# RECOMMENDED INSTALLATIONS
 
 -pycharm ide(any version it is optional but highly recommended)
 
 -robomongo(to display your database it is optional recommended)
 
-***CONFIG FILE CHANGES
+# CONFIG FILE CHANGES
 
 -filePathForTimelineOutputs = enter folder path for timeline i.e. user path/timeline/
 
@@ -29,10 +29,14 @@
 -wordListForStreaming=['python', 'java', '#java', 'javascript'] you can add whatever term do you want inside that list
 
 # Twitter API credentials
+
 please enter your keys and DON'T SHARE THEM
 
 consumer_key =
+
 consumer_secret =
+
 access_key =
+
 access_secret =
 
