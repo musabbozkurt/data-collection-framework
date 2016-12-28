@@ -71,5 +71,5 @@ enter 2016_Jan_CSE498_Graduation.config file path to configFilePath
 6-sign in and you are in...
 
 
-#ENJOYS
+#ENJOYS...
 
