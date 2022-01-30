@@ -11,10 +11,12 @@ def print_menu():  ## Your menu design here
     print("7. Find Term Frequency, the most common tokens, stop word, all Hastags etc...")
     print("8. Exit")
     print(67 * "-")
+
+
 loop = True
 while loop:  ## While loop which will keep going until loop = False
     print_menu()  ## Displays menu
-    choice = int(input("Enter your choice [1-8]: "),10)
+    choice = int(input("Enter your choice [1-8]: "), 10)
 
     from DM import Logging
 
@@ -31,25 +33,26 @@ while loop:  ## While loop which will keep going until loop = False
 
                 tweetcollect = TweetCollector()
 
-                if cont=="yes":
-                    numberOfTweet=int(input("How many tweets do you want to collect? : "), 10)
-                    while cont=="yes":
+                if cont == "yes":
+                    numberOfTweet = int(input("How many tweets do you want to collect? : "), 10)
+                    while cont == "yes":
                         with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
                             for line in f:
                                 for word in line.split():
-                                    tweetcollect.get_all_tweets(word, numberOfTweet,mongodbName)
+                                    tweetcollect.get_all_tweets(word, numberOfTweet, mongodbName)
 
                         cont = input("\nType any key to cont \n ")
                 elif cont == "no":
-                        username=input("Please enter username : ")
-                        numberOfTweet = int(input("How many tweets do you want to collect? : "), 10)
-                        tweetcollect.get_all_tweets(username, numberOfTweet,mongodbName)
+                    username = input("Please enter username : ")
+                    numberOfTweet = int(input("How many tweets do you want to collect? : "), 10)
+                    tweetcollect.get_all_tweets(username, numberOfTweet, mongodbName)
                 else:
-                    loop2=False
+                    loop2 = False
                     print("You have exited from tweet collector succesfully...")
 
         except:
             import sys
+
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
@@ -57,7 +60,7 @@ while loop:  ## While loop which will keep going until loop = False
         ## You can add your code or functions here
     elif choice == 2:
         try:
-            loop3=True
+            loop3 = True
             while loop3:
                 # your code
                 print("Type any key to exit this option")
@@ -68,21 +71,22 @@ while loop:  ## While loop which will keep going until loop = False
 
                 followercollect = FollowerCollector()
                 if cont == "yes":
-                        with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
-                            for line in f:
-                                for word in line.split():
-                                    followercollect.write_on_file(word)
+                    with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
+                        for line in f:
+                            for word in line.split():
+                                followercollect.write_on_file(word)
 
-                        cont = input("Do you want to give a username list with file path? yes/no > ")
+                    cont = input("Do you want to give a username list with file path? yes/no > ")
                 elif cont == "no":
                     username = input("Please enter username to collect followers: ")
                     followercollect.write_on_file(username)
                 else:
-                    loop3=False
+                    loop3 = False
                     print("You have exited from follower collector succesfully...")
 
         except:
             import sys
+
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
@@ -98,10 +102,11 @@ while loop:  ## While loop which will keep going until loop = False
             mongodbCollectionName = input("Please enter collection name inside database : ")
 
             mongoWrite = MongoWriter()
-            mongoWrite.writetoMongo(ConfigParser.filepathformongo,mongodbName,mongodbCollectionName)
+            mongoWrite.writetoMongo(ConfigParser.filepathformongo, mongodbName, mongodbCollectionName)
 
         except:
             import sys
+
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
@@ -126,6 +131,7 @@ while loop:  ## While loop which will keep going until loop = False
                 print("15. If you want to plot Favorite Count analysis please press 15")
                 print("16. Exit")
                 print(67 * "-")
+
 
             loop1 = True
 
@@ -193,6 +199,7 @@ while loop:  ## While loop which will keep going until loop = False
                     input("Wrong option selection. Enter any key to try again..")
         except:
             import sys
+
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
@@ -211,6 +218,7 @@ while loop:  ## While loop which will keep going until loop = False
             api = tweepy.API(auth)
 
             from datetime import datetime
+
             fmt = '%Y-%m-%d %H:%M:%S'
             now = datetime.strptime(datetime.now().strftime(fmt), fmt)
             print(now)
@@ -219,44 +227,50 @@ while loop:  ## While loop which will keep going until loop = False
 
             a = input("Enter a word, hashtag or something else or type STOP to start colleting tweets: ")
             sentence = []
-            #while a != ("stop"):
+            # while a != ("stop"):
             sentence.append(a)
             #    a = input("Enter a word, hashtag or something else or type STOP to start colleting tweets: ")
             print(sentence)
             print(conf.wordListForStreaming)
 
             from tweepy import Stream
-            stream = Stream(auth,CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
+
+            stream = Stream(auth, CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
             stream.filter(track=conf.wordListForStreaming)
 
         except:
             import sys
+
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
     elif choice == 6:
         try:
             from DM.CrossValidation import TermFrequency
+
             tf = TermFrequency
             from DM import ConfigParser
 
             numofFold = int(input("Enter number for N for cross validation? : "), 10)
-            Logging.log("N for cross validation "+str(numofFold))
+            Logging.log("N for cross validation " + str(numofFold))
             numofsplit = int(input("Enter number of split? : "), 10)
             Logging.log("number of split " + str(numofsplit))
             testSize = float(input("Enter number for test size between 0 and 1? it might be 0.3 : "))
             Logging.log("number for test size between 0 and 1 " + str(testSize))
             randomState = int(input("Enter random state you might enter 0(zero)? : "), 10)
             Logging.log("random state " + str(randomState))
-            testSizeforTraintest = float(input("Enter number for test size between 0 and 1? you might enter 0.4 or 0.6 : "))
+            testSizeforTraintest = float(
+                input("Enter number for test size between 0 and 1? you might enter 0.4 or 0.6 : "))
             Logging.log("number for test size between 0 and 1 " + str(testSizeforTraintest))
             cforKernel = int(input("Enter number for C for kernel in svc you might enter 1(one)? : "), 10)
             Logging.log("Number for C for kernel in svc " + str(cforKernel))
 
-            tf.termfreq(ConfigParser.filePathForCrossVal,numofFold,numofsplit,testSize,randomState,testSizeforTraintest,cforKernel)
+            tf.termfreq(ConfigParser.filePathForCrossVal, numofFold, numofsplit, testSize, randomState,
+                        testSizeforTraintest, cforKernel)
 
         except:
             import sys
+
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))
@@ -266,8 +280,9 @@ while loop:  ## While loop which will keep going until loop = False
             from DM.TermFreqAndAllTerms import TermFreqAndAllTerms
             from DM import ConfigParser
 
-            inputforMostCommon=int(input("Enter number to display the most frequent words (or tokens), are not exactly meaningful: "))
-            termMax=int(input("Enter number to print top of maximum term : "))
+            inputforMostCommon = int(
+                input("Enter number to display the most frequent words (or tokens), are not exactly meaningful: "))
+            termMax = int(input("Enter number to print top of maximum term : "))
 
             a = input("Enter a word, hashtag or something else to find Co-occurrence or type stop to exit: ")
 
@@ -276,6 +291,7 @@ while loop:  ## While loop which will keep going until loop = False
 
         except:
             import sys
+
             e = sys.exc_info()[1]
             print("Error: %s" % e)
             Logging.log(str(e))

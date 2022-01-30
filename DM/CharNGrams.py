@@ -1,5 +1,3 @@
-
-
 # character ngrams technique (split word into character group)
 class CharNGrams():
     def charNGrams(input, n):

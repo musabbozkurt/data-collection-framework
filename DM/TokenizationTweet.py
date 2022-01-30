@@ -1,5 +1,5 @@
-
 import nltk
+
 
 class TokenizationTweet():
     # kelime koku

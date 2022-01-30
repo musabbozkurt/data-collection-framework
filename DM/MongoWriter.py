@@ -1,9 +1,8 @@
-
 # this class write all txt files which are in the filepath direction into mongodb database
 
 
 class MongoWriter():
-    def writetoMongo(self,filepath,mongodbName,mongodbCollectionName):
+    def writetoMongo(self, filepath, mongodbName, mongodbCollectionName):
         import glob
         import json
 

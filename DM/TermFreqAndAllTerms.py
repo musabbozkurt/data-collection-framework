@@ -15,19 +15,19 @@ from DM import ConfigParser
 class TermFreqAndAllTerms():
     emoticons_str = ConfigParser.emoticons_str
     regex_str = [emoticons_str,
-    ConfigParser.HTML_tags,  # HTML tags
-    r'(?:@[\w_]+)',  # @-mentions
-    r"(?:\#+[\w_]+[\w\'_\-]*[\w_]+)",  # hash-tags
-    r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+',  # URLs
+                 ConfigParser.HTML_tags,  # HTML tags
+                 r'(?:@[\w_]+)',  # @-mentions
+                 r"(?:\#+[\w_]+[\w\'_\-]*[\w_]+)",  # hash-tags
+                 r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+',  # URLs
 
-    r'(?:(?:\d+,?)+(?:\.?\d+)?)',  # numbers
-    r"(?:[a-z][a-z'\-_]+[a-z])",  # words with - and '
-    r'(?:[\w_]+)',  # other words
-    r'(?:\S)'  # anything else
+                 r'(?:(?:\d+,?)+(?:\.?\d+)?)',  # numbers
+                 r"(?:[a-z][a-z'\-_]+[a-z])",  # words with - and '
+                 r'(?:[\w_]+)',  # other words
+                 r'(?:\S)'  # anything else
                  ]
 
-    #print(regex_str)
-    #print(emoticons_str)
+    # print(regex_str)
+    # print(emoticons_str)
 
     tokens_re = re.compile(r'(' + '|'.join(regex_str) + ')', re.VERBOSE | re.IGNORECASE)
     emoticon_re = re.compile(r'^' + emoticons_str + '$', re.VERBOSE | re.IGNORECASE)
@@ -50,7 +50,7 @@ class TermFreqAndAllTerms():
                 count_all.update(terms_all)
             # Print the first 5 most frequent words
             # print(count_all)
-            print('FIRST ' + str(inputforMostcommon)+' MOST FREQUENT WORDS ARE BELOW')
+            print('FIRST ' + str(inputforMostcommon) + ' MOST FREQUENT WORDS ARE BELOW')
             print("The most frequent words (or should I say, tokens), are not exactly meaningful.")
             print(count_all.most_common(inputforMostcommon))
 
@@ -158,4 +158,4 @@ class TermFreqAndAllTerms():
 
                 autolabel(rects1)
 
-                #plt.show()
+                # plt.show()

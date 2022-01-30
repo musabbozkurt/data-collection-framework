@@ -1,5 +1,3 @@
-
-
 # word ngrams technique (split text into word group)
 class NGrams():
     def ngrams(input, n):
@@ -9,4 +7,4 @@ class NGrams():
             g = ' '.join(input[i:i + n])
             output.setdefault(g, 0)
             output[g] += 1
-            #print(g)
+            # print(g)

@@ -7,17 +7,18 @@ from DM.AllVariableClass import AllVariableClass
 from DM import ConfigParser
 from DM import Logging
 
+
 class CustomStreamListener(tweepy.StreamListener):
     stweets = []
 
-    def __init__(self, api, mongodbName, mongodbCollectionName,fileName,numOfStreamTweet):
+    def __init__(self, api, mongodbName, mongodbCollectionName, fileName, numOfStreamTweet):
         self.api = api
         super(tweepy.StreamListener, self).__init__()
         self.num_tweets = 0
-        self.mongodbName=mongodbName
-        self.mongodbCollectionName=mongodbCollectionName
-        self.fileName=fileName
-        self.numOfStreamTweet=numOfStreamTweet
+        self.mongodbName = mongodbName
+        self.mongodbCollectionName = mongodbCollectionName
+        self.fileName = fileName
+        self.numOfStreamTweet = numOfStreamTweet
 
     def on_data(self, tweet):
         with open(ConfigParser.streamingTxtFile + self.fileName, 'a') as tf:
@@ -27,8 +28,10 @@ class CustomStreamListener(tweepy.StreamListener):
             Logging.log(self.mongodbName + " database has been created.")
             self.db.insert(json.loads(tweet))
 
-        Logging.log("Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
-        Logging.log("Tweets which are collecting from Streaming API added to "+self.mongodbCollectionName+" inside "+self.mongodbName +"mongodb database")
+        Logging.log(
+            "Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
+        Logging.log(
+            "Tweets which are collecting from Streaming API added to " + self.mongodbCollectionName + " inside " + self.mongodbName + "mongodb database")
         return True
 
     def on_sapi(self, stwets):
@@ -38,10 +41,11 @@ class CustomStreamListener(tweepy.StreamListener):
                                            CustomStreamListener(AllVariableClass.api,
                                                                 self.mongodbName,
                                                                 self.mongodbCollectionName,
-                                                                self.fileName,self.numOfStreamTweet))
+                                                                self.fileName, self.numOfStreamTweet))
             sapi.filter(track=stwets)
 
-            self.db = pymongo.MongoClient().__getattr__(self.mongodbName).__getattr__(self.mongodbCollectionName).insert(stwets)
+            self.db = pymongo.MongoClient().__getattr__(self.mongodbName).__getattr__(
+                self.mongodbCollectionName).insert(stwets)
             return True
         else:
             return False

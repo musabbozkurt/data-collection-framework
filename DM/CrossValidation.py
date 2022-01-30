@@ -24,6 +24,7 @@ class TermFrequency:
         seen = set()
         seen_add = seen.add
         return [x for x in myList if not (x in seen or seen_add(x))]
+
     def termfreq(fpath, numofFold, numofsplit, testSize, randomState, testSizeforTraintest, cforKernel):
         classLabels = []
         fileNames = []
@@ -32,9 +33,10 @@ class TermFrequency:
                 file_path = subdir + os.path.sep + file
                 fileNames.append(file_path)
                 classLabels.append(subdir[15:])
-        tfidf = TfidfVectorizer(tokenizer=TokenizationTweet.tokenize, preprocessor=TermFrequency.preprocess, lowercase=True)
+        tfidf = TfidfVectorizer(tokenizer=TokenizationTweet.tokenize, preprocessor=TermFrequency.preprocess,
+                                lowercase=True)
         # tfidf = TfidfVectorizer(tokenizer=TokenizationTextFile.tokenTextFile, preprocessor=TermFrequency.preprocess,lowercase=True)
-        docTermMatrix = tfidf.fit_transform((open(f,encoding = "ISO-8859-1").read() for f in fileNames))
+        docTermMatrix = tfidf.fit_transform((open(f, encoding="ISO-8859-1").read() for f in fileNames))
 
         print(docTermMatrix.shape)
         print(classLabels)
@@ -47,7 +49,8 @@ class TermFrequency:
 
         classifier = MultinomialNB().fit(X_train, y_train)
         predictions = classifier.predict(X_test)
-        evalReport = classification_report(y_test, predictions,target_names=classifier.classes_)  # distinct(classLabels))
+        evalReport = classification_report(y_test, predictions,
+                                           target_names=classifier.classes_)  # distinct(classLabels))
         print(evalReport)
 
         cm = confusion_matrix(classLabels, predictions)
@@ -55,7 +58,9 @@ class TermFrequency:
         print(cm)
 
         # train-test split 60%-40%
-        X_train, X_test, y_train, y_test = cross_validation.train_test_split(docTermMatrix, classLabels, test_size=testSizeforTraintest,random_state=randomState)
+        X_train, X_test, y_train, y_test = cross_validation.train_test_split(docTermMatrix, classLabels,
+                                                                             test_size=testSizeforTraintest,
+                                                                             random_state=randomState)
 
         classifier = MultinomialNB().fit(X_train, y_train)
         predictions = classifier.predict(X_test)
@@ -91,7 +96,9 @@ class TermFrequency:
         lower_bound = mean_score - ci
         upper_bound = mean_score + ci
         print("Score is %f +/-  %f" % (mean_score, ci))
-        print('95 percent probability that if this experiment were repeated over and over the average score would be between %f and %f' % (lower_bound, upper_bound))
+        print(
+            '95 percent probability that if this experiment were repeated over and over the average score would be between %f and %f' % (
+            lower_bound, upper_bound))
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
         scores = cross_val_score(clf, docTermMatrix, classLabels, cv=numofFold, scoring='f1_macro')
@@ -102,4 +109,4 @@ class TermFrequency:
 
         print(cross_val_score(clf, docTermMatrix, classLabels, cv=cv))
         predicted = cross_val_predict(clf, docTermMatrix, classLabels, cv=numofFold)
-        print(str(numofFold)+'-fold cross validation : ', metrics.accuracy_score(classLabels, predicted))
+        print(str(numofFold) + '-fold cross validation : ', metrics.accuracy_score(classLabels, predicted))
