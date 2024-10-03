@@ -1,12 +1,12 @@
 import tweepy
-from DM import ConfigParser as conf
-from DM import Logging
+from d_c_f.config import ConfigParser as Config
+from d_c_f import Logging
 
 
-class AllVariableClass:
+class TwitterConfigSetter:
     # authorize twitter, initialize tweepy
-    auth = tweepy.OAuthHandler(conf.consumer_key, conf.consumer_secret)
-    auth.set_access_token(conf.access_key, conf.access_secret)
+    auth = tweepy.OAuthHandler(Config.consumer_key, Config.consumer_secret)
+    auth.set_access_token(Config.access_key, Config.access_secret)
     api = tweepy.API(auth)
     # print(conf.access_key)
 

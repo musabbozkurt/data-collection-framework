@@ -1,6 +1,6 @@
 # character ngrams technique (split word into character group)
-class CharNGrams():
-    def charNGrams(input, n):
+class CharNGrams:
+    def char_n_grams(input, n):
         input = input.split(' ')
         output = {}
         for i in range(len(input) - n + 1):

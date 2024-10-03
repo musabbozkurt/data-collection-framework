@@ -1,7 +1,7 @@
 import nltk
 
 
-class TokenizationTweet():
+class TokenizationTweet:
     # kelime koku
     def stemmerTrFps6(term):
         return term[:6]

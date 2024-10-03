@@ -1,7 +1,7 @@
 import pymongo
 from tweepy.streaming import StreamListener
-from DM import Logging
-from DM import ConfigParser
+from d_c_f import Logging
+from d_c_f.config import ConfigParser
 
 
 # this class helps us to use streaming API according to given date

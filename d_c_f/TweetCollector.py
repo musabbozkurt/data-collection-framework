@@ -1,15 +1,15 @@
 # getting all tweets in users timeline according to their username.
 
-class TweetCollector():
+class TweetCollector:
     def get_all_tweets(self, screen_name, input, mongodbName):
         try:
             import json
 
-            from DM import Logging
-            from DM import ConfigParser
-            from DM.AllVariableClass import AllVariableClass
+            from d_c_f import Logging
+            from d_c_f.config import ConfigParser
+            from d_c_f.config.TwitterConfigSetter import TwitterConfigSetter
 
-            allclassvar = AllVariableClass()
+            allclassvar = TwitterConfigSetter()
             # Twitter only allows access to a users most recent 3240 tweets with this method
 
             # initialize a list to hold all the tweepy Tweets
@@ -61,12 +61,12 @@ class TweetCollector():
             pass
 
     def on_error(self, status_code):
-        from DM import Logging
+        from d_c_f import Logging
         Logging.log("Don't kill the collector here status code is : " + status_code)
         return True  # Don't kill the collector
 
     def on_timeout(self):
-        from DM import Logging
+        from d_c_f import Logging
 
         Logging.log("Don't kill the collector on timeouts.")
         return True  # Don't kill the collector

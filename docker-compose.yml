@@ -1,0 +1,70 @@
+services:
+  db:
+    image: mariadb:11.3.2-jammy
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: root_db
+      MARIADB_USER: user
+      MARIADB_PASSWORD: user
+    ports:
+      - "3306:3306"
+    expose:
+      - '3306'
+
+  phpmyadmin:
+    image: phpmyadmin:5.2.1-apache
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PMA_USER: root
+      PMA_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8080:80"
+    expose:
+      - "8080"
+
+  php-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - db
+      - phpmyadmin
+    ports:
+      - "3000:80"
+    expose:
+      - "3000"
+
+  mongo_db:
+    image: mongo:8.0.0-rc20
+    container_name: mongo_db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=password
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./database/db:/data/db
+      - ./database/dev.archive:/Databases/dev.archive
+      - ./database/production:/Databases/production
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=root
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password
+      - ME_CONFIG_MONGODB_URL=mongodb://root:password@mongo_db:27017/?authSource=admin
+      - ME_CONFIG_BASICAUTH_USERNAME=mexpress
+      - ME_CONFIG_BASICAUTH_PASSWORD=mexpress
+    links:
+      - mongo_db
+    restart: unless-stopped
+    ports:
+      - "8081:8081"

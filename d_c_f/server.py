@@ -1,12 +1,7 @@
 #!/usr/bin/env python
 import sys
-import tweepy
 import json
 import socket
-
-import time
-import argparse
-import string
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -16,19 +11,18 @@ socksize = 1024
 s.bind((host, port))
 
 while True:
-    from DM import Logging
-    from DM import ConfigParser
-    from DM.TweetCollector import TweetCollector
-    from DM.FollowerCollector import FollowerCollector
-    from DM.MongoWriter import MongoWriter
-    from DM.Analysis import Analysis
+    from d_c_f import Logging
+    from d_c_f.config import ConfigParser, ConfigParser as conf
+    from d_c_f.TweetCollector import TweetCollector
+    from d_c_f.FollowerCollector import FollowerCollector
+    from d_c_f.MongoWriter import MongoWriter
+    from d_c_f.Analysis import Analysis
     import tweepy
-    from DM import ConfigParser as conf
-    from DM.CustomStreamListener import CustomStreamListener
+    from d_c_f.CustomStreamListener import CustomStreamListener
     from datetime import datetime
     from tweepy import Stream
-    from DM.CrossValidation import TermFrequency
-    from DM.TermFreqAndAllTerms import TermFreqAndAllTerms
+    from d_c_f.CrossValidation import TermFrequency
+    from d_c_f.TermFreqAndAllTerms import TermFreqAndAllTerms
 
     print("Now listening...\n")
     s.listen(5)
@@ -43,7 +37,7 @@ while True:
         try:
             tweetcollect = TweetCollector()
             numberOfTweet = jsonResponse['msg1']
-            with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
+            with open(ConfigParser.filePathForListOfUsername, 'r') as f:
                 for line in f:
                     for word in line.split():
                         tweetcollect.get_all_tweets(word, int(numberOfTweet), mongodbName='CollectTweetFromUserList')
@@ -67,7 +61,7 @@ while True:
     elif (jsonResponse['msg0']) == 'collectfollowerfromuserlist':
         try:
             followercollect = FollowerCollector()
-            with open(ConfigParser.ListOfUsernamefilepath, 'r') as f:
+            with open(ConfigParser.filePathForListOfUsername, 'r') as f:
                 for line in f:
                     for word in line.split():
                         followercollect.write_on_file(word)
@@ -95,7 +89,7 @@ while True:
             mongodbCollectionName = jsonResponse['msg2']
 
             mongoWrite = MongoWriter()
-            mongoWrite.writetoMongo(ConfigParser.filepathformongo, mongodbName, mongodbCollectionName)
+            mongoWrite.writetoMongo(ConfigParser.filePathForMongo, mongodbName, mongodbCollectionName)
 
         except:
             e = sys.exc_info()[1]
@@ -107,7 +101,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.lang_analiz(ConfigParser.filepathformongo, numberOfBar)
+            analysis.lang_analiz(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -119,7 +113,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.country_analiz(ConfigParser.filepathformongo, numberOfBar)
+            analysis.country_analiz(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -131,7 +125,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.location_analiz(ConfigParser.filepathformongo, numberOfBar)
+            analysis.location_analiz(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -143,7 +137,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.timezone_analiz(ConfigParser.filepathformongo, numberOfBar)
+            analysis.timezone_analiz(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -155,7 +149,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.tweet(ConfigParser.filepathformongo, numberOfBar)
+            analysis.tweet(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -169,7 +163,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.create_at(ConfigParser.filepathformongo, numberOfBar)
+            analysis.create_at(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -181,7 +175,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.user_id(ConfigParser.filepathformongo, numberOfBar)
+            analysis.user_id(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -193,7 +187,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.id_str(ConfigParser.filepathformongo, numberOfBar)
+            analysis.id_str(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -205,7 +199,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.username(ConfigParser.filepathformongo, numberOfBar)
+            analysis.username(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -217,7 +211,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.screename(ConfigParser.filepathformongo, numberOfBar)
+            analysis.screename(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -229,7 +223,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.followers_count(ConfigParser.filepathformongo, numberOfBar)
+            analysis.followers_count(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -241,7 +235,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.friends_count(ConfigParser.filepathformongo, numberOfBar)
+            analysis.friends_count(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -253,7 +247,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.user_lang(ConfigParser.filepathformongo, numberOfBar)
+            analysis.user_lang(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -265,7 +259,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.retweet_count(ConfigParser.filepathformongo, numberOfBar)
+            analysis.retweet_count(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -277,7 +271,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.favorite_count(ConfigParser.filepathformongo, numberOfBar)
+            analysis.favorite_count(ConfigParser.filePathForMongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -287,7 +281,7 @@ while True:
 
     elif (jsonResponse['msg0']) == "streamfromlist":
         try:
-            from DM import ConfigParser as conf
+            from d_c_f import ConfigParser as conf
 
             mongodbName = jsonResponse['msg1']
             mongodbCollectionName = jsonResponse['msg2']

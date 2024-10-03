@@ -5,14 +5,13 @@ import string
 from collections import Counter
 
 import matplotlib.pyplot as plt
-import nltk
 import numpy as np
 from nltk.corpus import stopwords
 
-from DM import ConfigParser
+from d_c_f.config import ConfigParser
 
 
-class TermFreqAndAllTerms():
+class TermFreqAndAllTerms:
     emoticons_str = ConfigParser.emoticons_str
     regex_str = [emoticons_str,
                  ConfigParser.HTML_tags,  # HTML tags

@@ -2,13 +2,13 @@
 import pymongo
 import tweepy
 
-from DM.AllVariableClass import AllVariableClass
+from d_c_f.config.TwitterConfigSetter import TwitterConfigSetter
 
-from DM import ConfigParser
-from DM import Logging
+from d_c_f.config import ConfigParser
+from d_c_f import Logging
 
 
-class CustomStreamListener(tweepy.StreamListener):
+class CustomStream(tweepy.StreamListener):
     stweets = []
 
     def __init__(self, api, mongodbName, mongodbCollectionName, fileName, numOfStreamTweet):
@@ -37,11 +37,11 @@ class CustomStreamListener(tweepy.StreamListener):
     def on_sapi(self, stwets):
         self.num_tweets += 1
         if self.num_tweets < self.numOfStreamTweet:
-            sapi = tweepy.streaming.Stream(AllVariableClass.auth,
-                                           CustomStreamListener(AllVariableClass.api,
-                                                                self.mongodbName,
-                                                                self.mongodbCollectionName,
-                                                                self.fileName, self.numOfStreamTweet))
+            sapi = tweepy.streaming.Stream(TwitterConfigSetter.auth,
+                                           CustomStream(TwitterConfigSetter.api,
+                                                        self.mongodbName,
+                                                        self.mongodbCollectionName,
+                                                        self.fileName, self.numOfStreamTweet))
             sapi.filter(track=stwets)
 
             self.db = pymongo.MongoClient().__getattr__(self.mongodbName).__getattr__(

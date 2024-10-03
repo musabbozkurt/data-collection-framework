@@ -1,5 +1,5 @@
 # word ngrams technique (split text into word group)
-class NGrams():
+class NGrams:
     def ngrams(input, n):
         input = input.split(' ')
         output = {}
