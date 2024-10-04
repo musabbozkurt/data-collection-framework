@@ -1,4 +1,5 @@
 import configparser
+import os
 import sys
 
 configParser = configparser.RawConfigParser()
@@ -7,27 +8,35 @@ sys_path = sys.path[1]
 print(sys_path)
 
 file_path_for_timeline_outputs = sys_path + configParser.get('your-config', 'file_path_for_timeline_outputs')
+os.makedirs(file_path_for_timeline_outputs, exist_ok=True)
 print(file_path_for_timeline_outputs)
 
 file_path_for_followers_outputs = sys_path + configParser.get('your-config', 'file_path_for_followers_outputs')
+os.makedirs(file_path_for_followers_outputs, exist_ok=True)
 print(file_path_for_followers_outputs)
 
 file_path_for_list_of_username = sys_path + configParser.get('your-config', 'file_path_for_list_of_username')
+os.makedirs(file_path_for_list_of_username, exist_ok=True)
 print(file_path_for_list_of_username)
 
 file_path_for_mongo = sys_path + configParser.get('your-config', 'file_path_for_mongo')
+os.makedirs(file_path_for_mongo, exist_ok=True)
 print(file_path_for_mongo)
 
 file_path_for_tokenization = sys_path + configParser.get('your-config', 'file_path_for_tokenization')
+os.makedirs(file_path_for_tokenization, exist_ok=True)
 print(file_path_for_tokenization)
 
 file_path_for_cross_val = sys_path + configParser.get('your-config', 'file_path_for_cross_val')
+os.makedirs(file_path_for_cross_val, exist_ok=True)
 print(file_path_for_cross_val)
 
 streaming_txt_file = sys_path + configParser.get('your-config', 'streaming_txt_file')
+os.makedirs(streaming_txt_file, exist_ok=True)
 print(streaming_txt_file)
 
 streaming_db = sys_path + configParser.get('your-config', 'streaming_db')
+os.makedirs(streaming_db, exist_ok=True)
 print(streaming_db)
 
 consumer_key = configParser.get('your-config', 'consumer_key')
