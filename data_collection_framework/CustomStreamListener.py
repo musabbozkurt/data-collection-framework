@@ -43,7 +43,7 @@ class CustomStreamListener(StreamListener):
                     self.mongodbCollectionName).insert(record)
                 Logging.log(self.mongodbName + " database has been created. and insertion get started")
                 Logging.log(
-                    "Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
+                    "Tweets which are collecting from Streaming API added to " + ConfigParser.streaming_txt_file + " filepath")
                 Logging.log(
                     "Tweets which are collecting from Streaming API added to " + self.mongodbCollectionName + " inside " + self.mongodbName + "mongodb database")
                 return True

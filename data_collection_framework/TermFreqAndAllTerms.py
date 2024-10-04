@@ -14,10 +14,10 @@ from data_collection_framework.config import ConfigParser
 class TermFreqAndAllTerms:
     emoticons_str = ConfigParser.emoticons_str
     regex_str = [emoticons_str,
-                 ConfigParser.HTML_tags,  # HTML tags
+                 ConfigParser.html_tags,  # HTML tags
                  r'(?:@[\w_]+)',  # @-mentions
                  r"(?:\#+[\w_]+[\w\'_\-]*[\w_]+)",  # hash-tags
-                 r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+',  # URLs
+                 r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+',  # urls
 
                  r'(?:(?:\d+,?)+(?:\.?\d+)?)',  # numbers
                  r"(?:[a-z][a-z'\-_]+[a-z])",  # words with - and '
@@ -38,7 +38,7 @@ class TermFreqAndAllTerms:
         return tokens
 
     def term_counter(fname, inputforMostcommon):
-        fname = ConfigParser.streamingTxtFile
+        fname = ConfigParser.streaming_txt_file
         with open(fname, 'r') as f:
             count_all = Counter()
             for line in f:

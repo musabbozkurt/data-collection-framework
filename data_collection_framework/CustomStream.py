@@ -20,7 +20,7 @@ class CustomStream(tweepy.StreamListener):
         self.numOfStreamTweet = numOfStreamTweet
 
     def on_data(self, tweet):
-        with open(ConfigParser.streamingTxtFile + self.fileName, 'a') as tf:
+        with open(ConfigParser.streaming_txt_file + self.fileName, 'a') as tf:
             tf.write(tweet)
             import json
             self.db = pymongo.MongoClient().__getattr__(self.mongodbName).__getattr__(self.mongodbCollectionName)
@@ -28,7 +28,7 @@ class CustomStream(tweepy.StreamListener):
             self.db.insert(json.loads(tweet))
 
         Logging.log(
-            "Tweets which are collecting from Streaming API added to " + ConfigParser.streamingTxtFile + " filepath")
+            "Tweets which are collecting from Streaming API added to " + ConfigParser.streaming_txt_file + " filepath")
         Logging.log(
             "Tweets which are collecting from Streaming API added to " + self.mongodbCollectionName + " inside " + self.mongodbName + "mongodb database")
         return True

@@ -8,7 +8,7 @@ class FollowerCollector():
         import sys
         try:
             for follower in TwitterConfigSetter.api.followers_ids(screenname):
-                with open(ConfigParser.filePathForFollowersOutputs + screenname + ".txt", "a") as f:
+                with open(ConfigParser.file_path_for_followers_outputs + screenname + ".txt", "a") as f:
                     try:
                         follower_name = {
                             'Follower of ' + screenname: TwitterConfigSetter.api.get_user(follower).screen_name}
