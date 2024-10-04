@@ -98,7 +98,7 @@ class TermFrequency:
         print("Score is %f +/-  %f" % (mean_score, ci))
         print(
             '95 percent probability that if this experiment were repeated over and over the average score would be between %f and %f' % (
-            lower_bound, upper_bound))
+                lower_bound, upper_bound))
         print("Accuracy: %0.2f (+/- %0.2f)" % (scores.mean(), scores.std() * 2))
 
         scores = cross_val_score(clf, docTermMatrix, classLabels, cv=numofFold, scoring='f1_macro')

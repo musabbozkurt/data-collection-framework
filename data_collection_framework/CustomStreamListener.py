@@ -1,5 +1,6 @@
 import pymongo
 from tweepy.streaming import StreamListener
+
 from data_collection_framework import Logging
 from data_collection_framework.config import ConfigParser
 
