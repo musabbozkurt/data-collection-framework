@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `test_db`;
-USE `test_db`;
+CREATE DATABASE IF NOT EXISTS `root_db`;
+USE `root_db`;
 CREATE TABLE IF NOT EXISTS `users`
 (
     `id`       int(8)      NOT NULL AUTO_INCREMENT,

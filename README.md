@@ -3,14 +3,13 @@
 - `Python3` or higher version
 - `Pycharm IDE/IntelliJ IDEA` (Recommended)
 - `Docker` should be installed
-    - Run `docker-compose up --build` instead of `Xampp`
+    - Run `docker-compose up --build` instead of `XAMPP`
 - MongoDB
     - `Url`: http://localhost:8081 or http://0.0.0.0:8081/
     - `username`: `mexpress`
     - `password`: `mexpress`
-- mariadb
+- MariaDB
     - `MARIADB_DATABASE`: `root_db`
-    - `MARIADB_DATABASE`: `test_db`
     - `MARIADB_USER`: `user`
     - `MARIADB_PASSWORD`: `user`
 - phpMyAdmin
@@ -18,6 +17,8 @@
     - Run [testdb.sql](db_scripts/testdb.sql)
 - php-app
     - http://localhost:3000/
+    - Sign up
+    - Sign in
 
 ---
 
@@ -28,7 +29,7 @@
 - `filePathForListOfUsername` = Enter filepath for userList file. userList file can be text file contains Twitter
   usernames
 - `filePathForMongo` = filepath/of/text/files/to/store/mongodb/*.txt
-- `filePathForTokenization` = enter file path which contains text files.
+- `filePathForTokenization` = enter file path which contains text files
 - `filePathForCrossVal` = filepath must contains at least 2 folder which are containing text files
 - `wordListForStreaming` = ['python', 'java', '#java', 'javascript'] you can add whatever term do you want inside that
   list
