@@ -14,12 +14,11 @@ n = 4
 sixgrams = ngrams(sentence.split(), n)
 for grams in sixgrams:
     print(grams)
-from DM import NGrams as ngram
+from data_collection_framework.n_gram import NGrams as ngram
 
 ngram.NGrams.ngrams(sentence, 4)
 
 print(64 * 'a')
-from nltk.collocations import *
 import nltk
 
 # You should tokenize your text

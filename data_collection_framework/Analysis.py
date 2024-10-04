@@ -3,13 +3,12 @@
 # The json and re libraries are installed by default in Python.
 # You should install pandas and matplotlib if you don't have them in your machine.
 import json
-import os
 
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from DM import Logging
+from data_collection_framework import Logging
 
 
 class Analysis():

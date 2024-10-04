@@ -10,7 +10,4 @@ def log(msg):
 
     """Log `msg` to MongoDB log"""
 
-    entry = {}
-    entry['timestamp'] = str(datetime.now())
-    entry['msg'] = msg
-    log_collection.insert(entry)
+    log_collection.insert({'timestamp': str(datetime.now()), 'msg': msg})

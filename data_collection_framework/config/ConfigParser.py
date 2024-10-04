@@ -10,14 +10,14 @@ filePathForTimelineOutputs = configParser.get('your-config', 'filePathForTimelin
 filePathForFollowersOutputs = configParser.get('your-config', 'filePathForFollowersOutputs')
 # print(filePathForFollowersOutputs)
 
-ListOfUsernamefilepath = configParser.get('your-config', 'ListOfUsernamefilepath')
-# print(ListOfUsernamefilepath)
+filePathForListOfUsername = configParser.get('your-config', 'filePathForListOfUsername')
+# print(filePathForListOfUsername)
 
-filepathformongo = configParser.get('your-config', 'filepathformongo')
-# print(filepathformongo)
+filePathForMongo = configParser.get('your-config', 'filePathForMongo')
+# print(filePathForMongo)
 
-filepathfortokenization = configParser.get('your-config', 'filepathfortokenization')
-# print(filepathfortokenization)
+filePathForTokenization = configParser.get('your-config', 'filePathForTokenization')
+# print(filePathForTokenization)
 
 streamingTxtFile = configParser.get('your-config', 'streamingTxtFile')
 # print(streamingTxtFile)
@@ -34,8 +34,8 @@ access_key = configParser.get('your-config', 'access_key')
 access_secret = configParser.get('your-config', 'access_secret')
 # print(access_secret)
 
-streamingdb = configParser.get('your-config', 'streamingdb')
-# print(streamingdb)
+streamingDB = configParser.get('your-config', 'streamingDB')
+# print(streamingDB)
 
 emoticons_str = configParser.get('your-config', 'emoticons_str')
 # print(emoticons_str)
