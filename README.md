@@ -14,7 +14,6 @@
     - `MARIADB_PASSWORD`: `user`
 - phpMyAdmin
     - http://localhost:8080/
-    - Run [testdb.sql](db_scripts/testdb.sql)
 - php-app
     - http://localhost:3000/
     - Sign up
