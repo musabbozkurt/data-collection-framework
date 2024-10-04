@@ -10132,7 +10132,7 @@
                 context = document.implementation.createHTMLDocument("");
 
                 // Set the base href for the created document
-                // so any parsed elements with URLs
+                // so any parsed elements with urls
                 // are based on the document's URL (gh-2965)
                 base = context.createElement("base");
                 base.href = document.location.href;

@@ -36,7 +36,7 @@ while loop:  ## While loop which will keep going until loop = False
                 if cont == "yes":
                     numberOfTweet = int(input("How many tweets do you want to collect? : "), 10)
                     while cont == "yes":
-                        with open(ConfigParser.filePathForListOfUsername, 'r') as f:
+                        with open(ConfigParser.file_path_for_list_of_username, 'r') as f:
                             for line in f:
                                 for word in line.split():
                                     tweetcollect.get_all_tweets(word, numberOfTweet, mongodbName)
@@ -71,7 +71,7 @@ while loop:  ## While loop which will keep going until loop = False
 
                 followercollect = FollowerCollector()
                 if cont == "yes":
-                    with open(ConfigParser.filePathForListOfUsername, 'r') as f:
+                    with open(ConfigParser.file_path_for_list_of_username, 'r') as f:
                         for line in f:
                             for word in line.split():
                                 followercollect.write_on_file(word)
@@ -102,7 +102,7 @@ while loop:  ## While loop which will keep going until loop = False
             mongodbCollectionName = input("Please enter collection name inside database : ")
 
             mongoWrite = MongoWriter()
-            mongoWrite.writetoMongo(ConfigParser.filePathForMongo, mongodbName, mongodbCollectionName)
+            mongoWrite.writetoMongo(ConfigParser.file_path_for_mongo, mongodbName, mongodbCollectionName)
 
         except:
             import sys
@@ -147,49 +147,49 @@ while loop:  ## While loop which will keep going until loop = False
                 if choice == 1:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
                     ## You can add your code or functions here
-                    analysis.lang_analiz(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.lang_analiz(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 2:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.country_analiz(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.country_analiz(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 3:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.location_analiz(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.location_analiz(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 4:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.timezone_analiz(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.timezone_analiz(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 5:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.tweet(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.tweet(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 6:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.create_at(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.create_at(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 7:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.user_id(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.user_id(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 8:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.id_str(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.id_str(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 9:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.username(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.username(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 10:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.screename(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.screename(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 11:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.followers_count(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.followers_count(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 12:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.friends_count(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.friends_count(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 13:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.user_lang(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.user_lang(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 14:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.retweet_count(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.retweet_count(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 15:
                     numberOfBar = int(input("How many bars do you want to see in your plot? : "), 10)
-                    analysis.favorite_count(ConfigParser.filePathForMongo, numberOfBar)
+                    analysis.favorite_count(ConfigParser.file_path_for_mongo, numberOfBar)
                 elif choice == 16:
                     print("You have exited from analysis succesfully...")
                     ## You can add your code or functions here
@@ -230,12 +230,12 @@ while loop:  ## While loop which will keep going until loop = False
             sentence.append(a)
             #    a = input("Enter a word, hashtag or something else or type STOP to start colleting tweets: ")
             print(sentence)
-            print(conf.wordListForStreaming)
+            print(conf.word_list_for_streaming)
 
             from tweepy import Stream
 
             stream = Stream(auth, CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
-            stream.filter(track=conf.wordListForStreaming)
+            stream.filter(track=conf.word_list_for_streaming)
 
         except:
             import sys
@@ -264,7 +264,7 @@ while loop:  ## While loop which will keep going until loop = False
             cforKernel = int(input("Enter number for C for kernel in svc you might enter 1(one)? : "), 10)
             Logging.log("Number for C for kernel in svc " + str(cforKernel))
 
-            tf.termfreq(ConfigParser.filePathForCrossVal, numofFold, numofsplit, testSize, randomState,
+            tf.termfreq(ConfigParser.file_path_for_cross_val, numofFold, numofsplit, testSize, randomState,
                         testSizeforTraintest, cforKernel)
 
         except:
@@ -285,8 +285,8 @@ while loop:  ## While loop which will keep going until loop = False
 
             a = input("Enter a word, hashtag or something else to find Co-occurrence or type stop to exit: ")
 
-            TermFreqAndAllTerms.term_counter(ConfigParser.streamingTxtFile, inputforMostCommon)
-            TermFreqAndAllTerms.semantic(a, ConfigParser.streamingTxtFile, inputforMostCommon, termMax)
+            TermFreqAndAllTerms.term_counter(ConfigParser.streaming_txt_file, inputforMostCommon)
+            TermFreqAndAllTerms.semantic(a, ConfigParser.streaming_txt_file, inputforMostCommon, termMax)
 
         except:
             import sys

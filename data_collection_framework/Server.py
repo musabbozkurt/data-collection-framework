@@ -37,7 +37,7 @@ while True:
         try:
             tweetcollect = TweetCollector()
             numberOfTweet = jsonResponse['msg1']
-            with open(ConfigParser.filePathForListOfUsername, 'r') as f:
+            with open(ConfigParser.file_path_for_list_of_username, 'r') as f:
                 for line in f:
                     for word in line.split():
                         tweetcollect.get_all_tweets(word, int(numberOfTweet), mongodbName='CollectTweetFromUserList')
@@ -61,7 +61,7 @@ while True:
     elif (jsonResponse['msg0']) == 'collectfollowerfromuserlist':
         try:
             followercollect = FollowerCollector()
-            with open(ConfigParser.filePathForListOfUsername, 'r') as f:
+            with open(ConfigParser.file_path_for_list_of_username, 'r') as f:
                 for line in f:
                     for word in line.split():
                         followercollect.write_on_file(word)
@@ -89,7 +89,7 @@ while True:
             mongodbCollectionName = jsonResponse['msg2']
 
             mongoWrite = MongoWriter()
-            mongoWrite.writetoMongo(ConfigParser.filePathForMongo, mongodbName, mongodbCollectionName)
+            mongoWrite.writetoMongo(ConfigParser.file_path_for_mongo, mongodbName, mongodbCollectionName)
 
         except:
             e = sys.exc_info()[1]
@@ -101,7 +101,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.lang_analiz(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.lang_analiz(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -113,7 +113,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.country_analiz(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.country_analiz(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -125,7 +125,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.location_analiz(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.location_analiz(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -137,7 +137,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.timezone_analiz(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.timezone_analiz(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -149,7 +149,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.tweet(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.tweet(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -163,7 +163,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.create_at(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.create_at(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -175,7 +175,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.user_id(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.user_id(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -187,7 +187,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.id_str(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.id_str(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -199,7 +199,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.username(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.username(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -211,7 +211,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.screename(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.screename(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -223,7 +223,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.followers_count(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.followers_count(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -235,7 +235,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.friends_count(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.friends_count(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -247,7 +247,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.user_lang(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.user_lang(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -259,7 +259,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.retweet_count(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.retweet_count(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -271,7 +271,7 @@ while True:
         try:
             analysis = Analysis()
             numberOfBar = int(jsonResponse['msg1'])
-            analysis.favorite_count(ConfigParser.filePathForMongo, numberOfBar)
+            analysis.favorite_count(ConfigParser.file_path_for_mongo, numberOfBar)
 
         except:
             e = sys.exc_info()[1]
@@ -298,7 +298,7 @@ while True:
             print(date)
 
             stream = Stream(auth, CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
-            stream.filter(track=conf.wordListForStreaming)
+            stream.filter(track=conf.word_list_for_streaming)
 
         except:
             e = sys.exc_info()[1]
@@ -358,7 +358,7 @@ while True:
             cforKernel = int(jsonResponse['msg6'])
             Logging.log("Number for C for kernel in svc " + str(cforKernel))
 
-            tf.termfreq(ConfigParser.filePathForCrossVal, numofFold, numofsplit, testSize, randomState,
+            tf.termfreq(ConfigParser.file_path_for_cross_val, numofFold, numofsplit, testSize, randomState,
                         testSizeforTraintest, cforKernel)
         except:
             e = sys.exc_info()[1]
@@ -372,8 +372,8 @@ while True:
             termMax = int(jsonResponse['msg2'])
             a = jsonResponse['msg3']
 
-            TermFreqAndAllTerms.term_counter(ConfigParser.streamingTxtFile, inputforMostCommon)
-            TermFreqAndAllTerms.semantic(a, ConfigParser.streamingTxtFile, inputforMostCommon, termMax)
+            TermFreqAndAllTerms.term_counter(ConfigParser.streaming_txt_file, inputforMostCommon)
+            TermFreqAndAllTerms.semantic(a, ConfigParser.streaming_txt_file, inputforMostCommon, termMax)
         except:
             e = sys.exc_info()[1]
             print("Error: %s" % e)

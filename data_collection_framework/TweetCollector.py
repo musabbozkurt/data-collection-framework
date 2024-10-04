@@ -43,7 +43,7 @@ class TweetCollector:
 
                     # write tweets to the txt files and mongodb database.
                     for tweet in alltweets:
-                        f = open(ConfigParser.filePathForTimelineOutputs + screen_name + ".txt", "a")
+                        f = open(ConfigParser.file_path_for_timeline_outputs + screen_name + ".txt", "a")
                         f.write(json.dumps(tweet._json) + "\n")
                         import pymongo
                         self.db = pymongo.MongoClient().__getattr__(mongodbName).__getattr__(screen_name).insert(
