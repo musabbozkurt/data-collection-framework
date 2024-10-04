@@ -11,18 +11,18 @@ socksize = 1024
 s.bind((host, port))
 
 while True:
-    from d_c_f import Logging
-    from d_c_f.config import ConfigParser, ConfigParser as conf
-    from d_c_f.TweetCollector import TweetCollector
-    from d_c_f.FollowerCollector import FollowerCollector
-    from d_c_f.MongoWriter import MongoWriter
-    from d_c_f.Analysis import Analysis
+    from data_collection_framework import Logging
+    from data_collection_framework.config import ConfigParser, ConfigParser as conf
+    from data_collection_framework.TweetCollector import TweetCollector
+    from data_collection_framework.FollowerCollector import FollowerCollector
+    from data_collection_framework.MongoWriter import MongoWriter
+    from data_collection_framework.Analysis import Analysis
     import tweepy
-    from d_c_f.CustomStreamListener import CustomStreamListener
+    from data_collection_framework.CustomStreamListener import CustomStreamListener
     from datetime import datetime
     from tweepy import Stream
-    from d_c_f.CrossValidation import TermFrequency
-    from d_c_f.TermFreqAndAllTerms import TermFreqAndAllTerms
+    from data_collection_framework.CrossValidation import TermFrequency
+    from data_collection_framework.TermFreqAndAllTerms import TermFreqAndAllTerms
 
     print("Now listening...\n")
     s.listen(5)
@@ -281,7 +281,7 @@ while True:
 
     elif (jsonResponse['msg0']) == "streamfromlist":
         try:
-            from d_c_f import ConfigParser as conf
+            from data_collection_framework import ConfigParser as conf
 
             mongodbName = jsonResponse['msg1']
             mongodbCollectionName = jsonResponse['msg2']

@@ -18,7 +18,7 @@ while loop:  ## While loop which will keep going until loop = False
     print_menu()  ## Displays menu
     choice = int(input("Enter your choice [1-8]: "), 10)
 
-    from d_c_f import Logging
+    from data_collection_framework import Logging
 
     if choice == 1:
         try:
@@ -28,8 +28,8 @@ while loop:  ## While loop which will keep going until loop = False
                 print("Type any key to exit this option")
                 cont = input("Do you want to give a username list with file path? yes/no > ")
                 mongodbName = input("Please enter database name: ")
-                from d_c_f.config import ConfigParser, ConfigParser as conf
-                from d_c_f.TweetCollector import TweetCollector
+                from data_collection_framework.config import ConfigParser, ConfigParser as conf
+                from data_collection_framework.TweetCollector import TweetCollector
 
                 tweetcollect = TweetCollector()
 
@@ -66,8 +66,8 @@ while loop:  ## While loop which will keep going until loop = False
                 print("Type any key to exit this option")
                 cont = input("Do you want to give a username list with file path? yes/no > ")
 
-                from d_c_f.FollowerCollector import FollowerCollector
-                from d_c_f import ConfigParser
+                from data_collection_framework.FollowerCollector import FollowerCollector
+                from data_collection_framework import ConfigParser
 
                 followercollect = FollowerCollector()
                 if cont == "yes":
@@ -94,8 +94,8 @@ while loop:  ## While loop which will keep going until loop = False
         ## You can add your code or functions here
     elif choice == 3:
         try:
-            from d_c_f.MongoWriter import MongoWriter
-            from d_c_f import ConfigParser
+            from data_collection_framework.MongoWriter import MongoWriter
+            from data_collection_framework import ConfigParser
 
             mongodbName = input("Please enter database name to store : ")
 
@@ -139,8 +139,8 @@ while loop:  ## While loop which will keep going until loop = False
                 print_menu2()  ## Displays menu
                 choice = int(input("Enter your choice [1-16]: "))
 
-                from d_c_f.Analysis import Analysis
-                from d_c_f import ConfigParser
+                from data_collection_framework.Analysis import Analysis
+                from data_collection_framework import ConfigParser
 
                 analysis = Analysis()
 
@@ -210,7 +210,7 @@ while loop:  ## While loop which will keep going until loop = False
             fileName = input("Please enter file name : ")
 
             import tweepy
-            from d_c_f.CustomStreamListener import CustomStreamListener
+            from data_collection_framework.CustomStreamListener import CustomStreamListener
 
             auth = tweepy.OAuthHandler(conf.consumer_key, conf.consumer_secret)
             auth.set_access_token(conf.access_key, conf.access_secret)
@@ -245,10 +245,10 @@ while loop:  ## While loop which will keep going until loop = False
             Logging.log(str(e))
     elif choice == 6:
         try:
-            from d_c_f.CrossValidation import TermFrequency
+            from data_collection_framework.CrossValidation import TermFrequency
 
             tf = TermFrequency
-            from d_c_f import ConfigParser
+            from data_collection_framework import ConfigParser
 
             numofFold = int(input("Enter number for N for cross validation? : "), 10)
             Logging.log("N for cross validation " + str(numofFold))
@@ -276,8 +276,8 @@ while loop:  ## While loop which will keep going until loop = False
         ## You can add your code or functions here
     elif choice == 7:
         try:
-            from d_c_f.TermFreqAndAllTerms import TermFreqAndAllTerms
-            from d_c_f import ConfigParser
+            from data_collection_framework.TermFreqAndAllTerms import TermFreqAndAllTerms
+            from data_collection_framework import ConfigParser
 
             inputforMostCommon = int(
                 input("Enter number to display the most frequent words (or tokens), are not exactly meaningful: "))

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from nltk.corpus import stopwords
 
-from d_c_f.config import ConfigParser
+from data_collection_framework.config import ConfigParser
 
 
 class TermFreqAndAllTerms:

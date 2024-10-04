@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from d_c_f import Logging
+from data_collection_framework import Logging
 
 
 class Analysis():

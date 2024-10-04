@@ -5,9 +5,9 @@ class TweetCollector:
         try:
             import json
 
-            from d_c_f import Logging
-            from d_c_f.config import ConfigParser
-            from d_c_f.config.TwitterConfigSetter import TwitterConfigSetter
+            from data_collection_framework import Logging
+            from data_collection_framework.config import ConfigParser
+            from data_collection_framework.config.TwitterConfigSetter import TwitterConfigSetter
 
             allclassvar = TwitterConfigSetter()
             # Twitter only allows access to a users most recent 3240 tweets with this method
@@ -61,12 +61,12 @@ class TweetCollector:
             pass
 
     def on_error(self, status_code):
-        from d_c_f import Logging
+        from data_collection_framework import Logging
         Logging.log("Don't kill the collector here status code is : " + status_code)
         return True  # Don't kill the collector
 
     def on_timeout(self):
-        from d_c_f import Logging
+        from data_collection_framework import Logging
 
         Logging.log("Don't kill the collector on timeouts.")
         return True  # Don't kill the collector

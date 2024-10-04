@@ -6,7 +6,7 @@ class MongoWriter():
         import glob
         import json
 
-        from d_c_f import Logging
+        from data_collection_framework import Logging
 
         # create mongodb database
         from pymongo import MongoClient

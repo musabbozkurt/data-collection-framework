@@ -2,9 +2,9 @@
 class FollowerCollector():
     # this method writes users followers to the file and file name is named by screen name of the user
     def write_on_file(self, screenname, mongodbName="Followers"):
-        from d_c_f.config.TwitterConfigSetter import TwitterConfigSetter
-        from d_c_f import Logging
-        from d_c_f.config import ConfigParser
+        from data_collection_framework.config.TwitterConfigSetter import TwitterConfigSetter
+        from data_collection_framework import Logging
+        from data_collection_framework.config import ConfigParser
         import sys
         try:
             for follower in TwitterConfigSetter.api.followers_ids(screenname):
@@ -31,13 +31,13 @@ class FollowerCollector():
             pass
 
     def on_error(self, status_code):
-        from d_c_f import Logging
+        from data_collection_framework import Logging
 
         Logging.log("Don't kill the followerCollector. error status code : " + status_code)
         return True  # Don't kill the followerCollector
 
     def on_timeout(self):
-        from d_c_f import Logging
+        from data_collection_framework import Logging
 
         Logging.log("Don't kill the followerCollector on timeouts")
         return True  # Don't kill the followerCollector

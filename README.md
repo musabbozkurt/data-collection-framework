@@ -22,7 +22,7 @@
 
 ---
 
-### Update [ConfigFile.config](d_c_f/config/ConfigFile.config) with your configs
+### Update [ConfigFile.config](data_collection_framework/config/ConfigFile.config) with your configs
 
 - `filePathForTimelineOutputs` = Enter folder path for timeline i.e. user path/timeline/
 - `filePathForFollowersOutputs` = Enter folder path for followers i.e user path/followers/

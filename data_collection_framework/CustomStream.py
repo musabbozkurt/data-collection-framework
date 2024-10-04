@@ -2,10 +2,10 @@
 import pymongo
 import tweepy
 
-from d_c_f.config.TwitterConfigSetter import TwitterConfigSetter
+from data_collection_framework.config.TwitterConfigSetter import TwitterConfigSetter
 
-from d_c_f.config import ConfigParser
-from d_c_f import Logging
+from data_collection_framework.config import ConfigParser
+from data_collection_framework import Logging
 
 
 class CustomStream(tweepy.StreamListener):

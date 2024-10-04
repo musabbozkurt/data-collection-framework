@@ -14,7 +14,7 @@ n = 4
 sixgrams = ngrams(sentence.split(), n)
 for grams in sixgrams:
     print(grams)
-from d_c_f.n_gram import NGrams as ngram
+from data_collection_framework.n_gram import NGrams as ngram
 
 ngram.NGrams.ngrams(sentence, 4)
 
