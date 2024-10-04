@@ -1,6 +1,7 @@
 import tweepy
-from data_collection_framework.config import ConfigParser as Config
+
 from data_collection_framework import Logging
+from data_collection_framework.config import ConfigParser as Config
 
 
 class TwitterConfigSetter:
