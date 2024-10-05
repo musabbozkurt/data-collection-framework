@@ -2,8 +2,15 @@ import configparser
 import os
 import sys
 
+this_folder = os.path.dirname(os.path.abspath(__file__))
+print(this_folder)
+
+config_file = os.path.join(this_folder, 'ConfigFile.config')
+print(config_file)
+
 configParser = configparser.RawConfigParser()
-configParser.read('ConfigFile.config')
+configParser.read(config_file)
+
 sys_path = sys.path[1]
 print(sys_path)
 

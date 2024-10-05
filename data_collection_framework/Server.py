@@ -1,7 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3.8
 import json
+import os
 import socket
 import sys
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
+sys.path.insert(0, parent_dir_path)
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -12,7 +17,7 @@ s.bind((host, port))
 
 while True:
     from data_collection_framework import Logging
-    from data_collection_framework.config import ConfigParser, ConfigParser as conf
+    from data_collection_framework.config import ConfigParser
     from data_collection_framework.TweetCollector import TweetCollector
     from data_collection_framework.FollowerCollector import FollowerCollector
     from data_collection_framework.MongoWriter import MongoWriter
@@ -281,14 +286,12 @@ while True:
 
     elif (jsonResponse['msg0']) == "streamfromlist":
         try:
-            from data_collection_framework import ConfigParser as conf
-
             mongodbName = jsonResponse['msg1']
             mongodbCollectionName = jsonResponse['msg2']
             fileName = jsonResponse['msg3']
 
-            auth = tweepy.OAuthHandler(conf.consumer_key, conf.consumer_secret)
-            auth.set_access_token(conf.access_key, conf.access_secret)
+            auth = tweepy.OAuthHandler(ConfigParser.consumer_key, ConfigParser.consumer_secret)
+            auth.set_access_token(ConfigParser.access_key, ConfigParser.access_secret)
             api = tweepy.API(auth)
 
             fmt = '%Y-%m-%d %H:%M:%S'
@@ -298,7 +301,7 @@ while True:
             print(date)
 
             stream = Stream(auth, CustomStreamListener(api, mongodbName, mongodbCollectionName, fileName, now, date))
-            stream.filter(track=conf.word_list_for_streaming)
+            stream.filter(track=ConfigParser.word_list_for_streaming)
 
         except:
             e = sys.exc_info()[1]
@@ -312,8 +315,8 @@ while True:
             mongodbCollectionName = jsonResponse['msg2']
             fileName = jsonResponse['msg3']
 
-            auth = tweepy.OAuthHandler(conf.consumer_key, conf.consumer_secret)
-            auth.set_access_token(conf.access_key, conf.access_secret)
+            auth = tweepy.OAuthHandler(ConfigParser.consumer_key, ConfigParser.consumer_secret)
+            auth.set_access_token(ConfigParser.access_key, ConfigParser.access_secret)
             api = tweepy.API(auth)
 
             fmt = '%Y-%m-%d %H:%M:%S'
