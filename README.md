@@ -12,21 +12,25 @@
 
 ---
 
-### How to Run `Python App`
+### How to Run the Application
 
 1. Run via `Terminal` (OPTION 1)
-    1. `cd data_collection_framework/`
-    2. `python3 -m pip install -r requirement_libraries.txt`
-    3. `chmod +x Server.py`
-    4. `./Server.py`
+    1. Run `docker-compose up --build` command
+    2. `cd data_collection_framework/`
+    3. `python3 -m pip install -r requirement_libraries.txt`
+    4. `chmod +x Server.py`
+    5. `./Server.py`
 2. Run via `Pycharm IDE, IntelliJ IDEA, etc.` (OPTION 2)
-    - Right-click on the [Server.py](data_collection_framework/Server.py) and click `Run`
+    1. Run `docker-compose up --build` command via `Terminal`
+    2. Right-click on the [Server.py](data_collection_framework/Server.py) and click `Run`
 
 ---
 
-### How to Run `PHP App`
+### How to Test the Application
 
-- Run `docker-compose up --build` command
+1. http://localhost:3000/
+2. Sign up
+3. Sign in
 
 ---
 

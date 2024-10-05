@@ -1,5 +1,13 @@
-## Text menu in Python
+#!/usr/bin/env python3.8
+import os
+import sys
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+parent_dir_path = os.path.abspath(os.path.join(dir_path, os.pardir))
+sys.path.insert(0, parent_dir_path)
+
+
+## Text menu in Python
 def print_menu():  ## Your menu design here
     print(30 * "-", "WELCOME TO DATA COLLECTION FRAMEWORK", 30 * "-")
     print("1. Tweet Collector according to username list or username")
