@@ -2,14 +2,14 @@ import os
 import string
 
 import numpy as np
-from sklearn import cross_validation, svm
-from sklearn import metrics
+from sklearn import metrics, svm
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
 from sklearn.model_selection import ShuffleSplit
 from sklearn.model_selection import cross_val_predict
 from sklearn.model_selection import cross_val_score
+from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import MultinomialNB
 
 from data_collection_framework.TokenizationTweet import TokenizationTweet
@@ -58,9 +58,10 @@ class TermFrequency:
         print(cm)
 
         # train-test split 60%-40%
-        X_train, X_test, y_train, y_test = cross_validation.train_test_split(docTermMatrix, classLabels,
-                                                                             test_size=testSizeforTraintest,
-                                                                             random_state=randomState)
+        X_train, X_test, y_train, y_test = train_test_split(docTermMatrix,
+                                                            classLabels,
+                                                            test_size=testSizeforTraintest,
+                                                            random_state=randomState)
 
         classifier = MultinomialNB().fit(X_train, y_train)
         predictions = classifier.predict(X_test)

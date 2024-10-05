@@ -1,4 +1,4 @@
-# stremaming class collect tweets according to keywords which are in the array
+# CustomStream class collect tweets according to keywords which are in the array
 import pymongo
 import tweepy
 
@@ -7,7 +7,7 @@ from data_collection_framework.config import ConfigParser
 from data_collection_framework.config.TwitterConfigSetter import TwitterConfigSetter
 
 
-class CustomStream(tweepy.StreamListener):
+class CustomStream(tweepy.Stream):
     stweets = []
 
     def __init__(self, api, mongodbName, mongodbCollectionName, fileName, numOfStreamTweet):

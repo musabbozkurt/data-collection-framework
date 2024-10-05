@@ -1,12 +1,12 @@
 import pymongo
-from tweepy.streaming import StreamListener
+from tweepy import Stream
 
 from data_collection_framework import Logging
 from data_collection_framework.config import ConfigParser
 
 
 # this class helps us to use streaming API according to given date
-class CustomStreamListener(StreamListener):
+class CustomStreamListener(Stream):
     def __init__(self, api, mongodbName, mongodbCollectionName, fileName, datenow, date2):
         self.api = api
         super(CustomStreamListener, self).__init__()
