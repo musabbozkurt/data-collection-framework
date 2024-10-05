@@ -17,7 +17,7 @@
 1. Run via `Terminal` (OPTION 1)
     1. Run `docker-compose up --build` command
     2. `cd data_collection_framework/`
-    3. `python3 -m pip install -r requirement_libraries.txt`
+    3. `python3 -m pip install -r requirements.txt`
     4. `chmod +x Server.py`
     5. `./Server.py`
 2. Run via `Pycharm IDE, IntelliJ IDEA, etc.` (OPTION 2)
