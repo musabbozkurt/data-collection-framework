@@ -1,13 +1,14 @@
-CREATE DATABASE IF NOT EXISTS `root_db`;
+CREATE DATABASE IF NOT EXISTS `root_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE `root_db`;
 CREATE TABLE IF NOT EXISTS `users`
 (
-    `id`       int(8)      NOT NULL AUTO_INCREMENT,
-    `name`     varchar(30) NOT NULL,
-    `email`    varchar(60) NOT NULL,
-    `password` varchar(40) NOT NULL,
+    `id`            INT UNSIGNED NOT NULL AUTO_INCREMENT,
+    `name`          VARCHAR(60)  NOT NULL,
+    `email`         VARCHAR(255) NOT NULL,
+    `password_hash` VARCHAR(255) NOT NULL,
+    `created_at`    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `email` (`email`)
-) ENGINE = MyISAM
-  DEFAULT CHARSET = latin1
-  AUTO_INCREMENT = 1;
+    UNIQUE KEY `uq_users_email` (`email`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_unicode_ci;

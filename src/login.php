@@ -1,97 +1,62 @@
 <?php
-global $con;
-session_start();
 
-if (isset($_SESSION['usr_id']) != "") {
-    header("Location: index.php");
-}
+declare(strict_types=1);
 
-include_once 'dbconnect.php';
+require_once __DIR__ . '/bootstrap.php';
 
-//check if form is submitted
-if (isset($_POST['login'])) {
+use App\Auth;
+use App\Csrf;
+use App\Database;
+use App\UserRepository;
 
-    $email = mysqli_real_escape_string($con, $_POST['email']);
-    $password = mysqli_real_escape_string($con, $_POST['password']);
-    $result = mysqli_query($con, "SELECT * FROM users WHERE email = '" . $email . "' and password = '" . md5($password) . "'");
+Auth::requireGuest();
 
-    if ($row = mysqli_fetch_array($result)) {
-        $_SESSION['usr_id'] = $row['id'];
-        $_SESSION['usr_name'] = $row['name'];
-        header("Location: index.php");
+$error = null;
+$email = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $email = trim((string)($_POST['email'] ?? ''));
+    $password = (string)($_POST['password'] ?? '');
+
+    if (!Csrf::valid()) {
+        http_response_code(403);
+        $error = 'Invalid or expired form token. Please try again.';
+    } elseif ((new Auth(new UserRepository(Database::connection())))->attempt($email, $password)) {
+        redirect('index.php');
     } else {
-        $errormsg = "Incorrect Email or Password!!!";
+        $error = 'Incorrect email or password.';
     }
 }
+
+render('header', ['title' => 'Login']);
 ?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Login Page</title>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css"/>
-</head>
-<body text=#FFFFFF>
-<img src='b.png' style='position:fixed;top:0px;left:0px;width:100%;height:100%;z-index:-1;'>
-<nav class="navbar navbar-default" role="navigation">
-    <div class="container-fluid">
-        <!-- add header -->
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar1">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="index.php">Homepage</a>
-        </div>
-        <!-- menu items -->
-        <div class="collapse navbar-collapse" id="navbar1">
-            <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="login.php">Login</a></li>
-                <li><a href="register.php">Sign Up</a></li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
 <div class="container">
     <div class="row">
         <div class="col-md-4 col-md-offset-4 well">
-            <form role="form" action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post" name="loginform">
+            <form method="post" action="login.php">
                 <fieldset>
                     <legend>Login</legend>
-
+                    <?= Csrf::field() ?>
                     <div class="form-group">
-                        <label for="name">Email</label>
-                        <input type="text" name="email" placeholder="Your Email" required class="form-control"/>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="<?= e($email) ?>" required
+                               autocomplete="username" class="form-control">
                     </div>
-
                     <div class="form-group">
-                        <label for="name">Password</label>
-                        <input type="password" name="password" placeholder="Your Password" required
-                               class="form-control"/>
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required
+                               autocomplete="current-password" class="form-control">
                     </div>
-
-                    <div class="form-group">
-                        <input type="submit" name="login" value="Login" class="btn btn-primary"/>
-                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
                 </fieldset>
             </form>
-            <span class="text-danger"><?php if (isset($errormsg)) {
-                    echo $errormsg;
-                } ?></span>
+            <?php if ($error): ?><p class="text-danger"><?= e($error) ?></p><?php endif; ?>
         </div>
     </div>
     <div class="row">
         <div class="col-md-4 col-md-offset-4 text-center">
-            New User? <a href="register.php" style="color:red">Sign Up Here</a>
+            New user? <a href="register.php">Sign up here</a>
         </div>
     </div>
 </div>
-
-<script src="js/jquery-3.7.1.js"></script>
-<script src="js/bootstrap.min.js"></script>
-</body>
-</html>
+<?php render('footer'); ?>

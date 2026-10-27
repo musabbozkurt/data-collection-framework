@@ -1,0 +1,50 @@
+body {
+    color: #fff;
+    background: #222 url('../b.png') center / cover fixed no-repeat;
+}
+
+.panel-menu {
+    float: left;
+    width: 220px;
+    margin-top: 3%;
+}
+
+.menu-item {
+    display: block;
+    border: 2px solid silver;
+    padding: 8px;
+    text-align: center;
+    margin-bottom: 15px;
+    background: #3c3c3c;
+    color: #fff;
+    width: 100%;
+}
+
+.menu-item:hover, .menu-item.active {
+    background: #06f;
+    color: #fff;
+    text-decoration: none;
+}
+
+.content {
+    margin: 3% 0 0 250px;
+    padding: 20px;
+    background: #3c3c3c;
+    min-height: 480px;
+}
+
+.command-form[hidden], .tab[hidden] {
+    display: none;
+}
+
+.well, .well label {
+    color: #333;
+}
+
+.nav-logout {
+    padding: 0;
+}
+
+.navbar-form .btn-link {
+    color: #555;
+}
