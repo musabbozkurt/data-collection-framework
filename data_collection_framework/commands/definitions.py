@@ -1,11 +1,16 @@
 """Registers every command. Heavy libraries (tweepy, matplotlib, sklearn, nltk) are imported lazily."""
-from data_collection_framework.commands.base import (Command, CommandRegistry, Param, decimal, future_timestamp,
+import json
+import logging
+
+from data_collection_framework.commands.base import (Command, CommandError, CommandRegistry, Param, decimal,
+                                                     future_timestamp,
                                                      integer, text)
 from data_collection_framework.config.settings import Settings, get_settings
 from data_collection_framework.nlp.term_frequency import co_occurrences, plot_pairs, term_counter
 from data_collection_framework.storage.files import read_words
-from data_collection_framework.storage.mongo import MongoRepository
+from data_collection_framework.storage.mongo import MongoRepository, documents_page, overview
 
+log = logging.getLogger(__name__)
 NAME_PATTERN = r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}"
 USERNAME = Param("username", "Twitter username", text(r"[A-Za-z0-9_]{1,15}"))
 TWEET_COUNT = Param("tweet_count", "How many tweets do you want to collect?", integer(1, 3200))
@@ -14,6 +19,12 @@ COLLECTION = Param("collection", "Collection name", text(NAME_PATTERN))
 FILENAME = Param("filename", "File name", text(NAME_PATTERN))
 END_TIME = Param("end_time", "Finishing date (YYYY-MM-DD HH:MM:SS)", future_timestamp)
 KEYWORD = Param("keyword", "Word or hashtag to track", text(r"[^\s]{1,100}"))
+SCRAPE_KEYWORDS = Param("keywords", "Comma separated keywords", text(r"[^,\s][^,]{0,49}(,\s*[^,\s][^,]{0,49}){0,4}"))
+SCRAPE_LIMIT = Param("limit", "Pages per keyword", integer(1, 5))
+PROFILE_MAX = Param("max_tweets", "New tweets to collect", integer(1, 500))
+RESUME = Param("resume", "Keep earlier results (yes/no)", lambda value: text(r"(?i)yes|no")(value).lower() == "yes")
+PAGE_SIZE = Param("page_size", "Documents per page", integer(1, 50))
+PAGE = Param("page", "Page number", integer(1, 1_000_000))
 BARS = Param("bars", "How many bars do you want to see in your plot?", integer(1, 100))
 
 PLOTS = {
@@ -63,6 +74,32 @@ def build_registry(settings: Settings = None) -> CommandRegistry:
         streamer.stream(keywords)
         return "Streaming finished"
 
+    def scrape_x(keywords, limit):
+        from data_collection_framework.x_batch_scraper import scrape
+        saved = scrape([word.strip() for word in keywords.split(",")], limit, settings.mongo_uri)
+        lines = [f"{keyword}: {len(urls)} saved" + "".join(f"\n  {url}" for url in urls)
+                 for keyword, urls in saved.items()]
+        return "\n".join(lines)
+
+    def scrape_profile(username, max_tweets, resume):
+        import requests
+        from data_collection_framework.x_profile_scraper import scrape
+        try:
+            return scrape(username, max_tweets, resume, mongo_uri=settings.mongo_uri)
+        except RuntimeError as error:
+            log.exception("Profile scrape failed")
+            raise CommandError(str(error)) from None
+        except requests.RequestException as error:
+            log.exception("Profile scrape failed")
+            raise CommandError("Could not reach the page reader. Check your internet connection and try again "
+                               f"({type(error).__name__}).") from None
+
+    def mongo_databases():
+        return json.dumps(overview())
+
+    def mongo_documents(database, collection, page, page_size):
+        return json.dumps(documents_page(database, collection, page, page_size))
+
     def cross_validation(folds, splits, test_size, random_state, train_test_size, svm_c):
         from data_collection_framework.cross_validation import TermFrequency
         TermFrequency.termfreq(settings.file_path_for_cross_val, folds, splits, test_size, random_state,
@@ -98,6 +135,14 @@ def build_registry(settings: Settings = None) -> CommandRegistry:
                               lambda: collect_followers(read_words(settings.file_path_for_list_of_username))))
     registry.register(Command("collectfollowerfromusername", "Collect followers from a username", (USERNAME,),
                               lambda username: collect_followers([username])))
+    registry.register(Command("scrapexbatch", "Scrape X pages for keywords (no API credits needed)",
+                              (SCRAPE_KEYWORDS, SCRAPE_LIMIT), scrape_x))
+    registry.register(Command("scrapexprofile", "Scrape an X profile's tweets with a browser session",
+                              (USERNAME, PROFILE_MAX, RESUME), scrape_profile))
+    registry.register(Command("mongodatabases", "List MongoDB databases and collections (JSON)", (),
+                              mongo_databases))
+    registry.register(Command("mongodocuments", "Show one page of a collection's documents, newest first (JSON)",
+                              (DATABASE, COLLECTION, PAGE, PAGE_SIZE), mongo_documents))
     registry.register(Command("storedata", "Store collected text files in MongoDB", (DATABASE, COLLECTION),
                               store_data))
     for name, (metric, title) in PLOTS.items():

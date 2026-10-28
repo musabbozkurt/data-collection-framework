@@ -27,7 +27,7 @@ final class PythonServerClient
     }
 
     /** @return array{ok: bool, message: string} */
-    public function send(string $command, array $args): array
+    public function send(string $command, array $args, ?int $readTimeout = null): array
     {
         // Docker Desktop resolves host.docker.internal to an unreachable IPv6 address first, so prefer IPv4
         $ipv4 = filter_var($this->host, FILTER_VALIDATE_IP) ? false : gethostbynamel($this->host);
@@ -38,7 +38,7 @@ final class PythonServerClient
         }
 
         try {
-            stream_set_timeout($socket, $this->readTimeout);
+            stream_set_timeout($socket, $readTimeout ?? $this->readTimeout);
             $payload = json_encode(['command' => $command, 'args' => $args, 'token' => $this->token], JSON_THROW_ON_ERROR);
             fwrite($socket, $payload . "\n");
             $line = fgets($socket);

@@ -38,10 +38,30 @@ Browser ──► PHP (Apache, :3000) ──JSON over TCP──► Python server
 1. `docker-compose up -d --build` (MariaDB, phpMyAdmin, PHP app, MongoDB, mongo-express)
 2. Start the Python server (the first run creates `.venv` and installs all packages automatically):
     1. `make server` (reads `PY_SERVER_TOKEN` and `TWITTER_*` from the environment or from `.env`)
-    2. Without `make`:
+       works from any directory: `make -f /path/to/data-collection-framework/Makefile server`
+    2. Without `make`, from the project root (`.venv` is created in the current directory):
        `python3 -m venv .venv && .venv/bin/python -m pip install -r data_collection_framework/requirements.txt`,
-       then `.venv/bin/python data_collection_framework/server.py`
+       then `.venv/bin/python data_collection_framework/server.py` (the script itself runs from any directory)
 3. Open http://localhost:3000/, sign up, sign in and run commands.
+
+The **X Scraper** page (`/scraper.php`) collects public X pages for keywords you enter (web search + Jina Reader, no X
+API credits) into MongoDB `x_batch_db.tweets_by_keywords`. The same job runs from a terminal with
+`python data_collection_framework/x_batch_scraper.py "keyword" --live 60`.
+
+The **X Profile Scraper** page (`/profile.php`) follows the approach of
+the [Proxidize Twitter scraper article](https://proxidize.com/blog/twitter-scraper/): a Playwright browser opens a
+profile and captures the GraphQL JSON that X's web app loads while scrolling (tweet text, engagement, views, media,
+hashtags, profile details) instead of parsing HTML. It adds a reusable login session, checkpoints with resume, JSON/CSV
+export (`data_collection_framework/x_profile_data/<user>/`), MongoDB storage (`x_profile_db.profile_tweets`), an
+engagement summary and an optional proxy (`X_PROXY=host:port[:user:password]`). Without a login (the default) it reads
+the public profile page, which gives the latest handful of posts. For deeper scrolling, optionally run `make browsers`
+then `make x-login` once (sign in by hand in the opened window); the saved session is then used automatically. Terminal
+use: `.venv/bin/python data_collection_framework/x_profile_scraper.py user NASA --max 100 --resume`. Not taken over from
+the article: automation-flag hiding and randomized "human" timing, and the OpenAI analysis (the summary is local). Use
+your own account and respect X's terms; X may still limit or block automated access.
+
+The **MongoDB Data** page (`/mongo.php`) lists your MongoDB databases with their collections and document counts; click
+a collection to see its newest 20 documents.
 
 Prefer a console instead of the web UI? Run `make menu` (it uses the same commands).
 

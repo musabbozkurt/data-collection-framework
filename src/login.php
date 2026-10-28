@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 render('header', ['title' => 'Login']);
 ?>
-<div class="container">
+<div class="app-shell auth-shell">
     <div class="row">
         <div class="col-md-4 col-md-offset-4 well">
             <form method="post" action="login.php">

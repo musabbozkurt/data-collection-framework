@@ -36,17 +36,14 @@ if ($user && $_SERVER['REQUEST_METHOD'] === 'POST') {
 
 render('header', ['title' => 'Home', 'active' => $activeCommand]);
 ?>
-<div class="container-fluid">
+<div class="app-shell">
     <?php if (!$user): ?>
-        <h1>Welcome</h1>
-        <p>Please <a href="login.php">log in</a> or <a href="register.php">sign up</a> to use the framework.</p>
-    <?php else: ?>
-        <div class="panel-menu">
-            <button type="button" class="menu-item active" data-tab="main">Main Page</button>
-            <?php foreach (array_keys($groups) as $i => $group): ?>
-                <button type="button" class="menu-item" data-tab="tab<?= $i ?>"><?= e($group) ?></button>
-            <?php endforeach; ?>
+        <div class="content welcome">
+            <h1>Welcome</h1>
+            <p>Please <a href="login.php">log in</a> or <a href="register.php">sign up</a> to use the framework.</p>
         </div>
+    <?php else: ?>
+        <?php render('menu', ['groupNames' => array_keys($groups), 'current' => 'home']); ?>
 
         <div class="content">
             <?php if ($result): ?>

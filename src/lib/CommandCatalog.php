@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
+use DateTimeImmutable;
+
 /**
  * Describes every command the Python server understands, grouped for the UI.
  * Field names match the Python command parameters; the server remains the authority on validation.
@@ -132,8 +134,8 @@ final class CommandCatalog
         } elseif ($type === 'number' && !is_numeric($value)) {
             $result = ['', 'Must be a number'];
         } elseif ($type === 'datetime') {
-            $date = \DateTimeImmutable::createFromFormat('Y-m-d\TH:i', substr($value, 0, 16))
-                ?: \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
+            $date = DateTimeImmutable::createFromFormat('Y-m-d\TH:i', substr($value, 0, 16))
+                ?: DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $value);
             $result = $date ? [$date->format('Y-m-d H:i:s'), null] : ['', 'Invalid date'];
         }
         return $result;

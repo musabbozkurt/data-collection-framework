@@ -4,6 +4,7 @@ import os
 from dataclasses import dataclass
 from functools import lru_cache
 from pathlib import Path
+from urllib.parse import quote_plus
 
 PACKAGE_DIR = Path(__file__).resolve().parent.parent
 CONFIG_FILE = Path(__file__).resolve().parent / "config.ini"
@@ -47,6 +48,12 @@ class Settings:
             getattr(self, key).mkdir(parents=True, exist_ok=True)
 
 
+def _default_mongo_uri() -> str:
+    """Matches the MongoDB container of docker-compose.yml, which requires the root credentials."""
+    password = quote_plus(os.environ.get("MONGO_ROOT_PASSWORD", "password"))
+    return f"mongodb://root:{password}@localhost:27017/?authSource=admin"
+
+
 def _load(config_file: Path = CONFIG_FILE) -> Settings:
     parser = configparser.RawConfigParser()
     parser.read(config_file)
@@ -69,7 +76,7 @@ def _load(config_file: Path = CONFIG_FILE) -> Settings:
         access_secret=secret("access_secret"),
         bearer_token=secret("bearer_token"),
         word_list_for_streaming=keywords,
-        mongo_uri=os.environ.get("MONGO_URI") or get("mongo_uri", "mongodb://localhost:27017"),
+        mongo_uri=os.environ.get("MONGO_URI") or get("mongo_uri", _default_mongo_uri()),
         server_host=os.environ.get("PY_SERVER_HOST", "127.0.0.1"),
         server_port=int(os.environ.get("PY_SERVER_PORT", "5555")),
         server_token=os.environ.get("PY_SERVER_TOKEN", ""),

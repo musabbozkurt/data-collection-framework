@@ -155,3 +155,4 @@ cython_debug/
 
 # Generated data
 data_collection_framework/data_folders/
+data_collection_framework/x_profile_data/
