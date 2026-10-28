@@ -81,7 +81,7 @@ make test
 
 Manual check: http://localhost:3000/ → Sign up → Sign in.
 
-GitHub Actions (`.github/workflows/ci.yml`) runs on every push and pull request: pytest on Python 3.9 and 3.12, a
+GitHub Actions (`.github/workflows/ci.yml`) runs on every push and pull request: pytest on Python 3.12, a
 `php -l` syntax check of `src/`, and a smoke test (`scripts/smoke_test.sh`) that starts the Python server and the PHP
 app with MariaDB, signs up and in, loads the pages and checks that PHP reaches the Python server. Run the smoke test
 locally against a running stack with `bash scripts/smoke_test.sh`.
