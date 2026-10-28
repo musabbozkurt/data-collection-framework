@@ -54,6 +54,9 @@ jobs:
           cache-dependency-path: data_collection_framework/requirements*.txt
       - run: python -m pip install -r data_collection_framework/requirements.txt
       - name: Start the Python command server
+        # On Linux runners the container reaches the host through the Docker bridge, not loopback
+        env:
+          PY_SERVER_HOST: 0.0.0.0
         run: |
           nohup python data_collection_framework/server.py > server.log 2>&1 &
           for i in $(seq 1 20); do nc -z 127.0.0.1 5555 && exit 0; sleep 1; done
