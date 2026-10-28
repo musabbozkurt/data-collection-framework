@@ -1,0 +1,379 @@
+html[data-theme="dark"], :root {
+    --page-bg: #1b1b1b;
+    --page-text: #ddd;
+    --panel-bg: #3c3c3c;
+    --panel-text: #fff;
+    --side-bg: #2b2b2b;
+    --item-bg: #3c3c3c;
+    --item-text: #fff;
+    --border: silver;
+    --foot-bg: #222;
+    --foot-text: #ddd;
+    --code-bg: #222;
+    --code-border: #555;
+    --link: #8cf;
+    --key: #8cf;
+    --str: #9d9;
+    --num: #fc6;
+    --bool: #f9c;
+    --guide: #666;
+    --btn-text: #333;
+    --nav-bg: #222;
+    --nav-text: #ddd;
+    --nav-border: #080808;
+    --well-bg: #2b2b2b;
+    --input-bg: #222;
+    --input-text: #eee;
+    --input-border: #666;
+}
+
+html[data-theme="light"] {
+    --page-bg: #f4f5f7;
+    --page-text: #333;
+    --panel-bg: #fff;
+    --panel-text: #222;
+    --side-bg: #e9ecef;
+    --item-bg: #fff;
+    --item-text: #222;
+    --border: #bbb;
+    --foot-bg: #e9ecef;
+    --foot-text: #444;
+    --code-bg: #f6f8fa;
+    --code-border: #d0d7de;
+    --link: #0b5ed7;
+    --key: #0550ae;
+    --str: #1a7f37;
+    --num: #9a6700;
+    --bool: #a40e8f;
+    --guide: #bbb;
+    --nav-bg: #fff;
+    --nav-text: #333;
+    --nav-border: #d0d7de;
+    --well-bg: #f6f8fa;
+    --input-bg: #fff;
+    --input-text: #222;
+    --input-border: #bbb;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    color: var(--page-text);
+    background: var(--page-bg);
+}
+
+body > .app-shell {
+    flex: 1 0 auto;
+    min-height: 0;
+}
+
+.app-header .navbar-brand {
+    font-weight: bold;
+    letter-spacing: .5px;
+}
+
+.header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    min-height: 50px;
+    margin: 0;
+}
+
+.header-actions > li {
+    float: none;
+    margin: 0;
+}
+
+.header-actions > li > a {
+    padding: 15px 10px;
+}
+
+.header-user {
+    color: var(--nav-text);
+}
+
+.header-logout {
+    margin: 0;
+}
+
+.theme-toggle {
+    min-width: 84px;
+    margin: 0;
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.theme-toggle, .header-logout .btn {
+    background: var(--item-bg);
+    color: var(--item-text);
+    border-color: var(--input-border);
+}
+
+.theme-toggle:focus:not(:focus-visible) {
+    outline: none;
+    box-shadow: none;
+}
+
+.theme-toggle .to-light::before {
+    content: "\2600\00a0";
+}
+
+.theme-toggle .to-dark::before {
+    content: "\263E\00a0";
+}
+
+@media (max-width: 767px) {
+    .header-actions {
+        padding: 10px 15px;
+    }
+}
+
+.app-footer {
+    flex: 0 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 12px 20px;
+    background: var(--foot-bg);
+    color: var(--foot-text);
+    border-top: 1px solid var(--code-border);
+}
+
+
+.navbar {
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+.app-shell {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    min-height: calc(100vh - 51px);
+}
+
+.panel-menu {
+    flex: 0 0 220px;
+    max-width: 100%;
+    padding: 15px;
+    background: var(--side-bg);
+}
+
+.menu-item {
+    display: block;
+    border: 2px solid var(--border);
+    padding: 8px;
+    text-align: center;
+    margin-bottom: 15px;
+    background: var(--item-bg);
+    color: var(--item-text);
+    width: 100%;
+}
+
+.menu-item:hover, .menu-item.active {
+    background: #06f;
+    color: #fff;
+    text-decoration: none;
+}
+
+.content {
+    flex: 1 1 400px;
+    min-width: 0;
+    padding: 20px;
+    margin: 0;
+    background: var(--panel-bg);
+    color: var(--panel-text);
+}
+
+@media (max-width: 767px) {
+    .panel-menu {
+        flex-basis: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .menu-item {
+        flex: 1 1 140px;
+        margin-bottom: 0;
+    }
+
+    .app-shell {
+        min-height: 0;
+    }
+
+    .content {
+        flex-basis: 100%;
+    }
+}
+
+.command-form[hidden], .tab[hidden] {
+    display: none;
+}
+
+.well, .well label, .well legend {
+    color: var(--panel-text);
+}
+
+.well {
+    background: var(--well-bg);
+    border-color: var(--code-border);
+}
+
+.well legend {
+    border-bottom-color: var(--code-border);
+}
+
+.form-control {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+    border-color: var(--input-border);
+}
+
+.form-control::placeholder {
+    color: var(--foot-text);
+    opacity: .6;
+}
+
+.form-control:focus {
+    background-color: var(--input-bg);
+    color: var(--input-text);
+}
+
+.nav-logout {
+    padding: 0;
+}
+
+.navbar-form .btn-link {
+    color: #555;
+}
+
+.scraper-result {
+    margin: 0;
+    background: transparent;
+    border: 0;
+    color: inherit;
+    white-space: pre-wrap;
+}
+
+.mongo-list a {
+    color: var(--link);
+}
+
+.json-node {
+    margin: 4px 0;
+}
+
+.json-root {
+    background: var(--code-bg);
+    border: 1px solid var(--code-border);
+    padding: 6px 10px;
+}
+
+.json-node > summary {
+    cursor: pointer;
+    overflow-wrap: anywhere;
+}
+
+.json-children {
+    margin-left: 18px;
+    padding-left: 10px;
+    border-left: 1px dashed var(--guide);
+}
+
+.json-leaf {
+    overflow-wrap: anywhere;
+}
+
+.json-key {
+    color: var(--key);
+}
+
+.json-string {
+    color: var(--str);
+}
+
+.json-number {
+    color: var(--num);
+}
+
+.json-bool, .json-null {
+    color: var(--bool);
+}
+
+.json-copy {
+    margin-left: 10px;
+    color: #333;
+}
+
+
+html[data-theme="dark"] .to-dark, html[data-theme="light"] .to-light {
+    display: none;
+}
+
+.welcome {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.welcome a, .auth-shell a {
+    color: var(--link);
+}
+
+.auth-shell {
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    background: var(--panel-bg);
+    color: var(--panel-text);
+}
+
+.auth-shell > .row {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.auth-shell .col-md-4 {
+    float: none;
+    width: 100%;
+    margin-left: 0;
+}
+
+.app-header.navbar-inverse {
+    background: var(--nav-bg);
+    border-color: var(--nav-border);
+}
+
+.app-header.navbar-inverse .navbar-brand,
+.app-header.navbar-inverse .navbar-nav > li > a {
+    color: var(--nav-text);
+}
+
+.app-header.navbar-inverse .navbar-collapse {
+    border-color: var(--nav-border);
+}
+
+.app-header.navbar-inverse .navbar-toggle {
+    border-color: var(--nav-border);
+}
+
+.app-header.navbar-inverse .navbar-toggle .icon-bar {
+    background: var(--nav-text);
+}

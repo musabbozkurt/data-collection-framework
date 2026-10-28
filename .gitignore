@@ -14,7 +14,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+/lib/
 lib64/
 parts/
 sdist/
@@ -152,3 +152,7 @@ cython_debug/
 .idea/
 /mariadb_data/
 /database/
+
+# Generated data
+data_collection_framework/data_folders/
+data_collection_framework/x_profile_data/

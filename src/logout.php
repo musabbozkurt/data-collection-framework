@@ -1,12 +1,10 @@
 <?php
-session_start();
 
-if (isset($_SESSION['usr_id'])) {
-    session_destroy();
-    unset($_SESSION['usr_id']);
-    unset($_SESSION['usr_name']);
-    header("Location: index.php");
-} else {
-    header("Location: index.php");
+declare(strict_types=1);
+
+require_once __DIR__ . '/bootstrap.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && App\Csrf::valid()) {
+    App\Auth::logout();
 }
-?>
+redirect('index.php');
