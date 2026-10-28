@@ -42,6 +42,7 @@ Browser ──► PHP (Apache, :3000) ──JSON over TCP──► Python server
     2. Without `make`, from the project root (`.venv` is created in the current directory):
        `python3 -m venv .venv && .venv/bin/python -m pip install -r data_collection_framework/requirements.txt`,
        then `.venv/bin/python data_collection_framework/server.py` (the script itself runs from any directory)
+    3. `kill -9 $(lsof -t -i:5555)` commands the server to stop (or `make stop-server`) on macOS/Linux.
 3. Open http://localhost:3000/, sign up, sign in and run commands.
 
 The **X Scraper** page (`/scraper.php`) collects public X pages for keywords you enter (web search + Jina Reader, no X
@@ -61,8 +62,34 @@ use: `.venv/bin/python data_collection_framework/x_profile_scraper.py user NASA 
 the article: automation-flag hiding and randomized "human" timing, and the OpenAI analysis (the summary is local). Use
 your own account and respect X's terms; X may still limit or block automated access.
 
+The **Discover Profiles** page (`/discover.php`) builds a list of X usernames without any X login: pick a letter and
+web search (the same engines as the X Scraper) is asked for profiles starting with it, or add usernames by hand. They
+are stored in MongoDB `x_profile_db.discovered_profiles` and listed alphabetically with checkboxes; tick up to 5 and
+press **Scrape selected** to collect their newest posts one after another (the same scraper as the profile page, with a
+per-profile result). An optional topic (for example `Java developer`) keeps only results whose title or snippet mention
+it, and lets you filter the list by that topic later. Search returns only a few names per try, so the list is neither
+random nor complete.
+
 The **MongoDB Data** page (`/mongo.php`) lists your MongoDB databases with their collections and document counts; click
-a collection to see its newest 20 documents.
+a collection to see its documents. Collections whose documents have a `username` (such as `profile_tweets`) are grouped
+by profile: each profile is a dropdown with its tweet count, and opening one loads only that profile's tweets, 10 per
+page (served by an index on `username`). Other collections show a flat list, newest first.
+
+The **Store Data in MongoDB** page (`/store.php`) lists every `.txt` file (one JSON document per line) found in the
+configured `file_path_for_mongo`, `file_path_for_timeline_outputs` and `streaming_txt_file` folders. Tick the files,
+choose a database and collection, and load them; the list refreshes itself whenever a collector adds files.
+
+The **Analytics & Charts** page (`/analytics.php`) computes statistics from the stored tweets
+(`x_profile_db.profile_tweets`): tweets, likes, retweets, views or replies per profile, most liked tweets, hashtags,
+frequent terms, terms that appear together, word n-grams, character n-grams, tweet/media types and tweets by date.
+Show them as a table with bars, a column chart or a pie chart, for all profiles or a single one.
+
+The **Cross Validation (MongoDB)** page (`/crossval.php`) trains a TF-IDF + linear SVM classifier that guesses which
+profile wrote a tweet (or any label field you choose from the selected collection) and reports k-fold accuracy, F1
+macro, shuffle-split scores and a confusion matrix with charts (needs at least two labels with as many documents as
+folds). The **Term Frequency (MongoDB)** page (`/terms.php`) counts the most common terms, hashtags and co-occurring
+word pairs of any text field. The older file-based collectors and streaming commands stay available from the Main Page
+menu.
 
 Prefer a console instead of the web UI? Run `make menu` (it uses the same commands).
 
@@ -125,7 +152,12 @@ The Python side is authoritative for validation; the PHP side only checks requir
 
 - `word_list_for_streaming` comma separated keywords for `streamfromlist`
 - `file_path_for_*` / `streaming_txt_file` data folders (relative to `data_collection_framework/`, created on start):
-    - `file_path_for_list_of_username`: `*.txt` files with Twitter usernames (whitespace separated)
+    - `file_path_for_list_of_username`: `*.txt` files with the usernames for the "from the user list" commands: one or
+      more per line, optional `@`, `#`
+      comments. [usernames.template.txt](data_collection_framework/config/usernames.template.txt) is copied there as
+      `usernames.txt` the first time the list is needed. The "from the user list" forms also have a **Load usernames
+      file** button (`/usernames.php`) to replace the list from your computer, and a download link for the example
+      template
     - `file_path_for_mongo`: `*.txt` files with one tweet JSON per line (used by store data and the plots)
     - `streaming_txt_file`: where streamed tweets are written (used by term frequency)
     - `file_path_for_cross_val`: at least 2 sub folders (one per class) with text files

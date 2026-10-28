@@ -2,11 +2,16 @@ import operator
 import string
 from collections import Counter, defaultdict
 from itertools import combinations
+from typing import Iterable, Iterator
 
 from data_collection_framework.nlp.patterns import EMOTICON_RE, TOKENS_RE
 from data_collection_framework.storage.files import iter_json_lines
 
-_EXTRA_STOPWORDS = {"rt", "via"}
+_EXTRA_STOPWORDS = {"rt", "via", "amp"}
+_FALLBACK_STOPWORDS = frozenset(
+    "a an and are as at be but by for from has have he her his i if in into is it its just me my no not of on "
+    "or our she so that the their them then there they this to was we were what when which who will with you "
+    "your".split())
 
 
 def preprocess(text: str, lowercase: bool = False) -> list:
@@ -17,21 +22,41 @@ def preprocess(text: str, lowercase: bool = False) -> list:
 
 
 def stop_words() -> frozenset:
-    from nltk.corpus import stopwords
-    return frozenset(stopwords.words("english")) | set(string.punctuation) | _EXTRA_STOPWORDS
+    """English stop words from NLTK when its corpus is installed, otherwise a small built-in list."""
+    try:
+        from nltk.corpus import stopwords
+        words = frozenset(stopwords.words("english"))
+    except (ImportError, LookupError):
+        words = _FALLBACK_STOPWORDS
+    return words | set(string.punctuation) | _EXTRA_STOPWORDS
 
 
 def content_terms(tokens: list, stop: frozenset) -> list:
-    """Tokens without stop words, hashtags and mentions."""
-    return [t for t in tokens if t not in stop and not t.startswith(("#", "@"))]
+    """Tokens without stop words, hashtags, mentions, links and bare numbers."""
+    return [t for t in tokens if t not in stop and not t.startswith(("#", "@", "http")) and len(t) > 2
+            and not t.replace(",", "").replace(".", "").isdigit()]
+
+
+def _file_texts(directory) -> Iterator[str]:
+    return (tweet.get("text", "") for tweet in iter_json_lines(directory))
 
 
 def term_counter(directory, most_common: int) -> dict:
-    """Single pass over all tweets collecting the term statistics."""
+    """Term statistics of the tweets stored as files."""
+    return count_terms(_file_texts(directory), most_common)
+
+
+def co_occurrences(directory, search_word: str, most_common: int, max_pairs: int) -> dict:
+    """Co-occurrences of the tweets stored as files."""
+    return count_pairs(_file_texts(directory), search_word, most_common, max_pairs)
+
+
+def count_terms(texts: Iterable[str], most_common: int) -> dict:
+    """Single pass over tweet texts collecting the term statistics."""
     stop = stop_words()
     counts, hashtags, only_terms = Counter(), Counter(), Counter()
-    for tweet in iter_json_lines(directory):
-        tokens = preprocess(tweet.get("text", ""))
+    for text in texts:
+        tokens = preprocess(text, lowercase=True)
         counts.update(tokens)
         hashtags.update(t for t in tokens if t.startswith("#"))
         only_terms.update(content_terms(tokens, stop))
@@ -42,19 +67,17 @@ def term_counter(directory, most_common: int) -> dict:
     }
 
 
-def co_occurrences(directory, search_word: str, most_common: int, max_pairs: int) -> dict:
+def count_pairs(texts: Iterable[str], search_word: str, most_common: int, max_pairs: int) -> dict:
     """Most frequent term pairs and the terms co-occurring with `search_word`."""
     stop = stop_words()
     pairs = defaultdict(Counter)
     with_word = Counter()
-    for tweet in iter_json_lines(directory):
-        terms = content_terms(preprocess(tweet.get("text", "")), stop)
+    for text in texts:
+        terms = sorted(set(content_terms(preprocess(text, lowercase=True), stop)))
         for first, second in combinations(terms, 2):
-            if first != second:
-                a, b = sorted((first, second))
-                pairs[a][b] += 1
-        if search_word in terms:
-            with_word.update(terms)
+            pairs[first][second] += 1
+        if search_word and search_word in terms:
+            with_word.update(t for t in terms if t != search_word)
     top_pairs = [((a, b), n) for a, counter in pairs.items() for b, n in counter.most_common(5)]
     top_pairs.sort(key=operator.itemgetter(1), reverse=True)
     return {"pairs": top_pairs[:max_pairs], "search": with_word.most_common(most_common)}

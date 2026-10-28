@@ -22,10 +22,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
+from data_collection_framework.storage.mongo import AUTHOR_PATH
+
 DATA_DIR = Path(os.environ.get("X_PROFILE_DATA_DIR") or Path(__file__).resolve().parent / "x_profile_data")
 SESSION_FILE = Path(os.environ.get("X_SESSION_FILE") or DATA_DIR / "x_session.json")
 MONGO_DATABASE, MONGO_COLLECTION = "x_profile_db", "profile_tweets"
-USERNAME_PATTERN = re.compile(r"[A-Za-z0-9_]{1,15}")
+PROXY_SCHEME = "http"  # proxies given as host:port are plain forward proxies
+USERNAME_PATTERN = re.compile(r"(?a)\w{1,15}")
 GRAPHQL_MARKERS = ("UserTweets", "UserByScreenName", "TweetDetail", "TweetResultByRestId")
 CSV_FIELDS = ("id", "created_at", "username", "text", "retweet_count", "favorite_count", "reply_count",
               "quote_count", "view_count", "hashtags", "is_reply", "media_urls")
@@ -174,7 +177,7 @@ def parse_proxy(value: str) -> Optional[Dict]:
     parts = value.strip().split(":") if value else []
     if len(parts) not in (2, 4):
         return None
-    proxy = {"server": f"http://{parts[0]}:{parts[1]}"}
+    proxy = {"server": f"{PROXY_SCHEME}://{parts[0]}:{parts[1]}"}
     if len(parts) == 4:
         proxy.update(username=parts[2], password=parts[3])
     return proxy
@@ -182,8 +185,8 @@ def parse_proxy(value: str) -> Optional[Dict]:
 
 READER_URL = "https://r.jina.ai/https://x.com/"
 TWEET_LINE = re.compile(r"^\*\s+\[\]\(https://x\.com/(\w+)/status/(\d+)\)(.*)$")
-COUNTS = re.compile(r"\[([\d.,]+[KMB]?)\]\(https://x\.com/compose/post\?in_reply_to=\d+\)\s+"
-                    r"([\d.,]+[KMB]?)\s+([\d.,]+[KMB]?)\s+([\d.,]+[KMB]?)")
+COUNTS = re.compile(r"\[([\d.,]{1,12}[KMB]?)\]\(https://x\.com/compose/post\?in_reply_to=\d{1,25}\)\s{1,5}"
+                    r"([\d.,]{1,12}[KMB]?)\s{1,5}([\d.,]{1,12}[KMB]?)\s{1,5}([\d.,]{1,12}[KMB]?)")
 UNITS = {"K": 1_000, "M": 1_000_000, "B": 1_000_000_000}
 
 
@@ -203,7 +206,7 @@ def _clean_text(body: str) -> str:
     if counts:
         cut.append(counts.start())
     body = body[:min(cut)] if cut else body
-    body = re.sub(r"\[([^\]]*)\]\([^)]*\)", r"\1", body)
+    body = re.sub(r"\[([^\]]{0,500})\]\([^)]{0,500}\)", r"\1", body)
     return re.sub(r"\s+", " ", body).strip()
 
 
@@ -216,8 +219,8 @@ def parse_reader_markdown(markdown: str, username: str) -> List[Dict]:
             continue
         author, tweet_id, body = match.groups()
         # drop the avatar, author name, handle and the dated link, keep what follows
-        dated = re.search(rf"\[@{re.escape(author)}\]\(https://x\.com/{re.escape(author)}\)\s+"
-                          rf"\[([^\]]+)\]\(https://x\.com/{re.escape(author)}/status/{tweet_id}\)", body, re.I)
+        dated = re.search(rf"\[@{re.escape(author)}\]\(https://x\.com/{re.escape(author)}\)\s{{1,5}}"
+                          rf"\[([^\]]{{1,100}})\]\(https://x\.com/{re.escape(author)}/status/{tweet_id}\)", body, re.I)
         created = dated.group(1) if dated else ""
         content = body[dated.end():] if dated else body
         counts = COUNTS.search(content)
@@ -237,9 +240,29 @@ def parse_reader_markdown(markdown: str, username: str) -> List[Dict]:
 
 
 ARTICLE = re.compile(r"<article.*?</article>", re.S)
-HTML_TEXT = re.compile(r'<div class="[^"]*whitespace-pre-wrap[^"]*" dir="auto">(.*?)</div>', re.S)
-ENGAGEMENT = re.compile(
-    r'data-engagement-action="(reply|retweet|like|generic)".*?<span[^>]*dir="ltr"[^>]*>([^<]+)</span>', re.S)
+AUTO_DIV = re.compile(r'<div class="([^"]*)" dir="auto">(.*?)</div>', re.S)
+ENGAGEMENT_TOKEN = re.compile(r'data-engagement-action="(reply|retweet|like|generic)"|<span ([^>]*)>([^<]+)</span>')
+
+
+def _engagement(article: str) -> Dict[str, int]:
+    """Counts shown next to the reply/retweet/like icons: the first left-to-right span after each icon."""
+    counts: Dict[str, int] = {}
+    kind = None
+    for action, attributes, value in ENGAGEMENT_TOKEN.findall(article):
+        if action:
+            kind = action
+        elif kind and 'dir="ltr"' in attributes:
+            counts[kind] = parse_count(value)
+            kind = None
+    return counts
+
+
+def _post_html(article: str) -> str:
+    """Inner HTML of the first div that holds the post text."""
+    for classes, inner in AUTO_DIV.findall(article):
+        if "whitespace-pre-wrap" in classes:
+            return inner
+    return ""
 
 
 def parse_reader_html(markup: str) -> List[Dict]:
@@ -252,9 +275,8 @@ def parse_reader_html(markup: str) -> List[Dict]:
         if not link:
             continue
         author, tweet_id = link.groups()
-        text_match = HTML_TEXT.search(article)
-        text = htmllib.unescape(re.sub(r"<[^>]+>", "", text_match.group(1))) if text_match else ""
-        counts = {kind: parse_count(value) for kind, value in ENGAGEMENT.findall(article)}
+        text = htmllib.unescape(re.sub(r"<[^>]+>", "", _post_html(article)))
+        counts = _engagement(article)
         tweets.append({
             "id": tweet_id, "text": re.sub(r"\s+", " ", text).strip(),
             "created_at": datetime.fromtimestamp(int(stamp.group(1)) / 1000).isoformat(
@@ -274,13 +296,13 @@ def parse_reader_html(markup: str) -> List[Dict]:
 
 def parse_reader_profile(markdown: str) -> Optional[Dict]:
     """Name, bio counts from the profile header of the Reader output."""
-    title = re.search(r"^Title:\s*(.+?)\s*\(@(\w+)\)", markdown, re.M)
+    title = re.search(r"^Title:[ \t]*([^\n]{1,200})\(@(\w{1,15})\)", markdown, re.M)
     if not title:
         return None
-    followers = re.search(r"\[([\d.,]+[KMB]?) Followers\]", markdown)
-    following = re.search(r"\[([\d.,]+[KMB]?) Following\]", markdown)
-    posts = re.search(r"^([\d.,]+[KMB]?) posts", markdown, re.M)
-    return {"name": title.group(1), "username": title.group(2),
+    followers = re.search(r"\[([\d.,]{1,12}[KMB]?) Followers\]", markdown)
+    following = re.search(r"\[([\d.,]{1,12}[KMB]?) Following\]", markdown)
+    posts = re.search(r"^([\d.,]{1,12}[KMB]?) posts", markdown, re.M)
+    return {"name": title.group(1).strip(), "username": title.group(2),
             "followers_count": parse_count(followers.group(1)) if followers else None,
             "friends_count": parse_count(following.group(1)) if following else None,
             "statuses_count": parse_count(posts.group(1)) if posts else None}
@@ -456,6 +478,7 @@ def _save_to_mongo(tweets: List[Dict], mongo_uri: str) -> Optional[int]:
     try:
         with MongoClient(mongo_uri, serverSelectionTimeoutMS=5000) as client:
             collection = client[MONGO_DATABASE][MONGO_COLLECTION]
+            collection.create_index(AUTHOR_PATH)
             for tweet in tweets:
                 collection.update_one({"_id": tweet["id"]}, {"$set": tweet}, upsert=True)
         return len(tweets)

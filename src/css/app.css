@@ -377,3 +377,160 @@ html[data-theme="dark"] .to-dark, html[data-theme="light"] .to-light {
 .app-header.navbar-inverse .navbar-toggle .icon-bar {
     background: var(--nav-text);
 }
+
+.letter-bar .btn {
+    margin: 0 2px 4px 0;
+}
+
+.profiles-table > thead > tr > th,
+.profiles-table > tbody > tr > td {
+    border-color: var(--border);
+}
+
+.command-form.form-inline .form-control {
+    margin: 0 6px;
+}
+
+.keyword-bar .btn {
+    margin: 0 2px 4px 0;
+}
+
+.analytics-form {
+    margin-bottom: 20px;
+}
+
+.analytics-form .form-control {
+    margin: 0 6px;
+    width: auto;
+}
+
+.analytics-label {
+    overflow-wrap: anywhere;
+}
+
+.analytics-bar meter {
+    width: 100%;
+    min-width: 120px;
+}
+
+.steps li {
+    margin-bottom: 8px;
+}
+
+.chart {
+    max-width: 100%;
+    height: auto;
+}
+
+.chart-axis {
+    stroke: var(--border);
+    stroke-width: 1;
+}
+
+.chart-label, .chart-value {
+    fill: var(--page-text);
+    font-size: 11px;
+}
+
+.chart-c0 {
+    fill: #4e79a7;
+    background: #4e79a7;
+}
+
+.chart-c1 {
+    fill: #f28e2b;
+    background: #f28e2b;
+}
+
+.chart-c2 {
+    fill: #e15759;
+    background: #e15759;
+}
+
+.chart-c3 {
+    fill: #76b7b2;
+    background: #76b7b2;
+}
+
+.chart-c4 {
+    fill: #59a14f;
+    background: #59a14f;
+}
+
+.chart-c5 {
+    fill: #edc948;
+    background: #edc948;
+}
+
+.chart-c6 {
+    fill: #b07aa1;
+    background: #b07aa1;
+}
+
+.chart-c7 {
+    fill: #ff9da7;
+    background: #ff9da7;
+}
+
+.chart-c8 {
+    fill: #9c755f;
+    background: #9c755f;
+}
+
+.chart-c9 {
+    fill: #bab0ac;
+    background: #bab0ac;
+}
+
+.chart-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-right: 6px;
+    border-radius: 2px;
+}
+
+.chart-box {
+    overflow-x: auto;
+    margin-bottom: 20px;
+}
+
+.matrix td, .matrix th {
+    text-align: center;
+}
+
+html[data-theme="dark"] input[type="datetime-local"] {
+    color-scheme: dark;
+}
+
+input[type="datetime-local"] {
+    cursor: pointer;
+}
+
+.flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: .5em;
+    margin: 1em 0;
+}
+
+.flow-step {
+    display: flex;
+    flex-direction: column;
+    padding: .8em 1em;
+    border-radius: 6px;
+    min-width: 12em;
+    color: #fff;
+    fill: currentColor;
+}
+
+.flow-step span {
+    font-size: .85em;
+    opacity: .9;
+}
+
+.flow-arrow {
+    align-self: center;
+    font-size: 1.6em;
+}
