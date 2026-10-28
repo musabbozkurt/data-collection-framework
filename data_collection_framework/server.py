@@ -45,6 +45,7 @@ def handle(conn: socket.socket, registry: CommandRegistry, settings: Settings) -
         args = request.get("args") or {}
         if not isinstance(args, dict):
             raise CommandError("'args' must be an object")
+        log.info("Request: command=%s args=%s", request.get("command"), args)
         return {"ok": True, "message": registry.execute(str(request.get("command", "")), args)}
     except CommandError as error:
         return {"ok": False, "message": str(error)}

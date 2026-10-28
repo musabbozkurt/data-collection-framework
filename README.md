@@ -54,8 +54,9 @@ profile and captures the GraphQL JSON that X's web app loads while scrolling (tw
 hashtags, profile details) instead of parsing HTML. It adds a reusable login session, checkpoints with resume, JSON/CSV
 export (`data_collection_framework/x_profile_data/<user>/`), MongoDB storage (`x_profile_db.profile_tweets`), an
 engagement summary and an optional proxy (`X_PROXY=host:port[:user:password]`). Without a login (the default) it reads
-the public profile page, which gives the latest handful of posts. For deeper scrolling, optionally run `make browsers`
-then `make x-login` once (sign in by hand in the opened window); the saved session is then used automatically. Terminal
+the public profile page, which gives the latest handful of posts. For deeper scrolling, click **Connect X account** on
+the page (or run `make browsers` then `make x-login`): a sign-in window opens on the machine running `server.py` and,
+once you are signed in by any method, the session is saved automatically and used from then on. Terminal
 use: `.venv/bin/python data_collection_framework/x_profile_scraper.py user NASA --max 100 --resume`. Not taken over from
 the article: automation-flag hiding and randomized "human" timing, and the OpenAI analysis (the summary is local). Use
 your own account and respect X's terms; X may still limit or block automated access.

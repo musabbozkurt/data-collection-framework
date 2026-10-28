@@ -48,7 +48,7 @@ def test_real_registry_exposes_all_commands():
     from data_collection_framework.commands.definitions import build_registry
     names = {c.name for c in build_registry().all()}
     assert {"plotlanguage", "storedata", "streamfrominput", "termfrequency", "crossvalidation"} <= names
-    assert len(names) == 28
+    assert len(names) == 30
 
 
 class FakeCollection:

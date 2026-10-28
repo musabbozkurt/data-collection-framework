@@ -11,6 +11,7 @@ bot-detection evasion is attempted.
 import argparse
 import asyncio
 import csv
+import html as htmllib
 import json
 import os
 import re
@@ -235,6 +236,42 @@ def parse_reader_markdown(markdown: str, username: str) -> List[Dict]:
     return tweets
 
 
+ARTICLE = re.compile(r"<article.*?</article>", re.S)
+HTML_TEXT = re.compile(r'<div class="[^"]*whitespace-pre-wrap[^"]*" dir="auto">(.*?)</div>', re.S)
+ENGAGEMENT = re.compile(
+    r'data-engagement-action="(reply|retweet|like|generic)".*?<span[^>]*dir="ltr"[^>]*>([^<]+)</span>', re.S)
+
+
+def parse_reader_html(markup: str) -> List[Dict]:
+    """Extracts tweets from the logged-out page HTML (more complete than the text version: every post has an id)."""
+    tweets = []
+    for article in ARTICLE.findall(markup):
+        stamp = re.search(r'"timestamp":(\d+)', article)
+        article = re.sub(r"<svg.*?</svg>|<script.*?</script>", "", article, flags=re.S)
+        link = re.search(r'href="/(\w+)/status/(\d+)"', article)
+        if not link:
+            continue
+        author, tweet_id = link.groups()
+        text_match = HTML_TEXT.search(article)
+        text = htmllib.unescape(re.sub(r"<[^>]+>", "", text_match.group(1))) if text_match else ""
+        counts = {kind: parse_count(value) for kind, value in ENGAGEMENT.findall(article)}
+        tweets.append({
+            "id": tweet_id, "text": re.sub(r"\s+", " ", text).strip(),
+            "created_at": datetime.fromtimestamp(int(stamp.group(1)) / 1000).isoformat(
+                timespec="seconds") if stamp else "",
+            "user": {"username": author, "display_name": "", "followers_count": 0, "verified": False},
+            "metrics": {"retweet_count": counts.get("retweet", 0), "favorite_count": counts.get("like", 0),
+                        "reply_count": counts.get("reply", 0), "quote_count": 0,
+                        "view_count": counts.get("generic", 0)},
+            "hashtags": re.findall(r'href="/hashtag/[^"]*"[^>]*>#?([^<]+)<', article),
+            "media": [{"type": "photo", "url": u} for u in dict.fromkeys(
+                htmllib.unescape(u) for u in
+                re.findall(r'src="(https://pbs\.twimg\.com/(?:media|card_img)/[^"]+)"', article))],
+            "is_reply": False, "scraped_at": time.time(),
+        })
+    return tweets
+
+
 def parse_reader_profile(markdown: str) -> Optional[Dict]:
     """Name, bio counts from the profile header of the Reader output."""
     title = re.search(r"^Title:\s*(.+?)\s*\(@(\w+)\)", markdown, re.M)
@@ -249,10 +286,13 @@ def parse_reader_profile(markdown: str) -> Optional[Dict]:
             "statuses_count": parse_count(posts.group(1)) if posts else None}
 
 
-def fetch_reader(username: str, timeout: int = 60) -> str:
-    """Public page text without any X login (a third-party reader renders the page)."""
+def fetch_reader(username: str, timeout: int = 60, html: bool = True) -> str:
+    """Public page without any X login (a third-party reader renders it); HTML by default, text if html=False."""
     import requests
-    response = requests.get(READER_URL + username, timeout=timeout, headers={"User-Agent": "Mozilla/5.0"})
+    headers = {"User-Agent": "Mozilla/5.0"}
+    if html:
+        headers["X-Return-Format"] = "html"
+    response = requests.get(READER_URL + username, timeout=timeout, headers=headers)
     response.raise_for_status()
     return response.text
 
@@ -395,10 +435,12 @@ def scrape(username: str, max_tweets: int = 50, resume: bool = False, headless: 
                 raise RuntimeError("The Playwright browser is missing. Run 'make browsers'.") from error
             raise
     else:
-        markdown = fetch_reader(username)
-        found = parse_reader_markdown(markdown, username)
+        markdown = fetch_reader(username, html=False)
+        found = parse_reader_html(fetch_reader(username)) or parse_reader_markdown(markdown, username)
         result = {"tweets": found, "profile": parse_reader_profile(markdown),
-                  "new": [t for t in found if t["id"] not in known]}
+                  "new": [t for t in found if t["id"] not in known],
+                  "note": f"Requested {max_tweets}, but X only shows the newest {len(found)} posts to visitors who are "
+                          "not signed in. Fetching more needs a saved X login session (make x-login)."}
 
     if not result["tweets"]:
         raise RuntimeError(f"No posts found for @{username}. Check that the username exists and is spelled correctly "
@@ -406,7 +448,7 @@ def scrape(username: str, max_tweets: int = 50, resume: bool = False, headless: 
     tweets = merge_tweets(existing, result["tweets"])
     checkpoint = store.save(tweets, result["profile"], len(result["new"]))
     stored = _save_to_mongo(result["new"], mongo_uri) if mongo_uri else None
-    return _report(username, result, tweets, checkpoint, store, stored)
+    return _report(username, result, tweets, checkpoint, store, stored, max_tweets)
 
 
 def _save_to_mongo(tweets: List[Dict], mongo_uri: str) -> Optional[int]:
@@ -423,38 +465,84 @@ def _save_to_mongo(tweets: List[Dict], mongo_uri: str) -> Optional[int]:
 
 
 def _report(username: str, result: Dict, tweets: List[Dict], checkpoint: Dict, store: ProfileStore,
-            stored: Optional[int]) -> str:
+            stored: Optional[int], max_tweets: int = 0) -> str:
     stats = summarize(tweets)
     profile = result["profile"] or checkpoint.get("profile") or {}
     lines = [
         f"@{username}: {len(result['new'])} new tweets, {len(tweets)} in total (session {checkpoint['session_count']})"]
     if profile:
-        lines.append(f"Profile: {profile.get('name')} - {profile.get('followers_count')} followers, "
-                     f"{profile.get('statuses_count')} posts")
+        details = [f"{profile[key]} {label}" for key, label in (("followers_count", "followers"),
+                                                                ("statuses_count", "posts")) if
+                   profile.get(key) is not None]
+        lines.append(f"Profile: {profile.get('name')}" + (" - " + ", ".join(details) if details else ""))
     lines.append(f"Likes: {stats['total_likes']} (avg {stats['average_likes']}), retweets: {stats['total_retweets']}, "
                  f"views: {stats['total_views']}, replies: {stats['replies']}, with media: {stats['with_media']}")
     if stats["top_hashtags"]:
         lines.append("Top hashtags: " + ", ".join(f"#{tag} ({count})" for tag, count in stats["top_hashtags"]))
     lines.append(f"Most liked ({stats['most_liked']['likes']}): {stats['most_liked']['text']}")
+    if result.get("note") and len(result["tweets"]) < max_tweets:
+        lines.append(f"Note: {result['note']}")
     lines.append(f"Saved to {store.directory}")
     if stored is not None:
         lines.append(f"MongoDB: {stored} tweets upserted into {MONGO_DATABASE}.{MONGO_COLLECTION}")
     return "\n".join(lines)
 
 
-def login(session_file: Path = SESSION_FILE) -> None:
-    """Opens a visible browser; sign in by hand, then press Enter to save the session for later runs."""
+YANDEX_PATHS = (
+    "/Applications/Yandex.app/Contents/MacOS/Yandex",
+    "/usr/bin/yandex-browser",
+    os.path.expandvars(r"%LOCALAPPDATA%\Yandex\YandexBrowser\Application\browser.exe"),
+)
+
+
+def browser_options(browser: str) -> Dict[str, Any]:
+    """Launch options for the visitor's own browser (edge, chrome or yandex); anything else uses bundled Chromium."""
+    if browser == "edge":
+        return {"channel": "msedge"}
+    if browser == "chrome":
+        return {"channel": "chrome"}
+    if browser == "yandex":
+        path = next((p for p in YANDEX_PATHS if Path(p).exists()), None)
+        if path:
+            return {"executable_path": path}
+    return {}
+
+
+def has_session(session_file: Path = SESSION_FILE) -> bool:
+    return session_file.exists()
+
+
+def login(session_file: Path = SESSION_FILE, timeout: int = 300, browser: str = "") -> str:
+    """Opens a visible browser window on this machine (the visitor's own browser when installed); once you finish
+    signing in to X (any method) the session is saved."""
     from playwright.sync_api import sync_playwright
     session_file.parent.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
-        browser = playwright.chromium.launch(headless=False)
-        context = browser.new_context(viewport={"width": 1280, "height": 900})
-        context.new_page().goto("https://x.com/login")
-        input("Sign in to X in the opened window, then press Enter here to save the session... ")
-        context.storage_state(path=str(session_file))
-        browser.close()
-    session_file.chmod(0o600)  # the file holds your login cookies
-    print(f"✅ Session saved to {session_file}")
+        options = browser_options(browser)
+        try:
+            window = playwright.chromium.launch(headless=False, **options)
+        except Exception:  # that browser is not installed or not drivable: fall back to bundled Chromium
+            window = playwright.chromium.launch(headless=False)
+        try:
+            context = window.new_context(viewport={"width": 1280, "height": 900})
+            page = context.new_page()
+            page.goto("https://x.com/login")
+            deadline = time.time() + timeout
+            while time.time() < deadline:
+                if any(c["name"] == "auth_token" for c in context.cookies("https://x.com")):
+                    page.wait_for_timeout(2000)  # let X finish setting its cookies
+                    context.storage_state(path=str(session_file))
+                    session_file.chmod(0o600)  # the file holds your login cookies
+                    return f"X account connected. Session saved to {session_file}"
+                if page.is_closed():
+                    break
+                page.wait_for_timeout(1000)
+        except Exception as error:  # the window was closed while waiting
+            if "closed" not in str(error).lower():
+                raise
+        finally:
+            window.close()
+    raise RuntimeError("X sign-in was not completed (window closed or 5 minutes passed). Try again.")
 
 
 def main() -> None:
@@ -470,7 +558,7 @@ def main() -> None:
     args = parser.parse_args()
 
     if args.command == "login":
-        login()
+        print(login())
         return
     sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
     from data_collection_framework.config.settings import get_settings

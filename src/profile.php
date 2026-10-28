@@ -11,6 +11,7 @@ use App\PythonServerClient;
 
 const PROFILE_TIMEOUT_SECONDS = 600;
 const MAX_TWEETS = 500;
+const CONNECT_TIMEOUT_SECONDS = 330;
 
 if (!Auth::user()) {
     redirect('login.php');
@@ -30,6 +31,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!Csrf::valid()) {
         http_response_code(403);
         $error = 'Invalid or expired form token. Please try again.';
+    } elseif (($_POST['action'] ?? '') === 'connect_x') {
+        $agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+        $browser = match (true) {
+            str_contains($agent, 'YaBrowser') => 'yandex',
+            str_contains($agent, 'Edg/') => 'edge',
+            str_contains($agent, 'Chrome/') => 'chrome',
+            default => 'other',
+        };
+        $result = PythonServerClient::fromEnv()->send('connectx', ['browser' => $browser], CONNECT_TIMEOUT_SECONDS);
     } elseif (preg_match('/^[A-Za-z0-9_]{1,15}$/', $username) !== 1) {
         $error = 'Enter a valid X username (letters, digits and underscores, up to 15 characters).';
     } elseif ($maxTweets === false) {
@@ -42,6 +52,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
     }
 }
+
+$session = PythonServerClient::fromEnv()->send('xsession', []);
+$connected = $session['ok'] && $session['message'] === 'connected';
 
 render('header', ['title' => 'X Profile Scraper', 'active' => '']);
 ?>
@@ -61,6 +74,19 @@ render('header', ['title' => 'X Profile Scraper', 'active' => '']);
                 <pre class="scraper-result"><?= e($result['message']) ?></pre>
             </div>
         <?php endif; ?>
+
+        <form method="post" action="profile.php" class="command-form" id="connect-x-form">
+            <?= Csrf::field() ?>
+            <input type="hidden" name="action" value="connect_x">
+            <p>X account: <strong><?= $connected ? 'connected (deeper scrolling enabled)' : 'not connected' ?></strong>
+            </p>
+            <button type="submit" class="btn btn-default"><?= $connected ? 'Reconnect' : 'Connect' ?> X account</button>
+            <p class="help-block">Opens a sign-in window of the browser you are using now (Edge, Chrome or Yandex, when
+                installed on the machine that runs the Python server). Sign in with
+                your X account (any method); the session is saved automatically and the window closes. Without it
+                only the newest ~5 posts per profile are available.</p>
+        </form>
+        <hr>
 
         <form method="post" action="profile.php" class="command-form">
             <?= Csrf::field() ?>

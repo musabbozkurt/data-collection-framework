@@ -131,3 +131,15 @@ def test_parse_reader_markdown_without_login():
     assert tweet["metrics"]["favorite_count"] == 2100 and tweet["metrics"]["view_count"] == 1300000
     assert tweet["hashtags"] == ["Artemis"] and len(tweet["media"]) == 1
     assert parse_reader_profile(READER_SAMPLE)["followers_count"] == 92300000
+
+
+def test_parse_reader_html_reads_posts_without_text_links():
+    from data_collection_framework.x_profile_scraper import parse_reader_html
+    markup = ('<article><a href="/Bob/status/77">Oct 1</a><script>run({"timestamp":1792770627000})</script>'
+              '<div class="x whitespace-pre-wrap" dir="auto"><span>Hello &amp; <b>world</b></span></div>'
+              '<div data-engagement-action="reply"><span class="q" dir="ltr">9</span></div>'
+              '<div data-engagement-action="like"><span dir="ltr">1.5K</span></div></article>')
+    [tweet] = parse_reader_html(markup)
+    assert tweet["id"] == "77" and tweet["text"] == "Hello & world"
+    assert tweet["metrics"]["reply_count"] == 9 and tweet["metrics"]["favorite_count"] == 1500
+    assert tweet["created_at"].startswith("2026-")

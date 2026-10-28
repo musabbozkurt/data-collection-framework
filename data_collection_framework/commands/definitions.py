@@ -22,6 +22,7 @@ KEYWORD = Param("keyword", "Word or hashtag to track", text(r"[^\s]{1,100}"))
 SCRAPE_KEYWORDS = Param("keywords", "Comma separated keywords", text(r"[^,\s][^,]{0,49}(,\s*[^,\s][^,]{0,49}){0,4}"))
 SCRAPE_LIMIT = Param("limit", "Pages per keyword", integer(1, 5))
 PROFILE_MAX = Param("max_tweets", "New tweets to collect", integer(1, 500))
+BROWSER = Param("browser", "Browser to sign in with", text(r"edge|chrome|yandex|other"))
 RESUME = Param("resume", "Keep earlier results (yes/no)", lambda value: text(r"(?i)yes|no")(value).lower() == "yes")
 PAGE_SIZE = Param("page_size", "Documents per page", integer(1, 50))
 PAGE = Param("page", "Page number", integer(1, 1_000_000))
@@ -94,6 +95,22 @@ def build_registry(settings: Settings = None) -> CommandRegistry:
             raise CommandError("Could not reach the page reader. Check your internet connection and try again "
                                f"({type(error).__name__}).") from None
 
+    def connect_x(browser):
+        from data_collection_framework.x_profile_scraper import login
+        try:
+            return login(browser=browser)
+        except RuntimeError as error:
+            log.exception("X sign-in failed")
+            raise CommandError(str(error)) from None
+        except Exception as error:
+            log.exception("X sign-in failed")
+            raise CommandError("Could not open the sign-in browser. Run 'make browsers' once on the machine "
+                               f"that runs the Python server ({type(error).__name__}).") from None
+
+    def x_session():
+        from data_collection_framework.x_profile_scraper import has_session
+        return "connected" if has_session() else "not connected"
+
     def mongo_databases():
         return json.dumps(overview())
 
@@ -139,6 +156,9 @@ def build_registry(settings: Settings = None) -> CommandRegistry:
                               (SCRAPE_KEYWORDS, SCRAPE_LIMIT), scrape_x))
     registry.register(Command("scrapexprofile", "Scrape an X profile's tweets with a browser session",
                               (USERNAME, PROFILE_MAX, RESUME), scrape_profile))
+    registry.register(Command("connectx", "Sign in to X in a browser window and save the session", (BROWSER,),
+                              connect_x))
+    registry.register(Command("xsession", "Report whether an X session is saved", (), x_session))
     registry.register(Command("mongodatabases", "List MongoDB databases and collections (JSON)", (),
                               mongo_databases))
     registry.register(Command("mongodocuments", "Show one page of a collection's documents, newest first (JSON)",

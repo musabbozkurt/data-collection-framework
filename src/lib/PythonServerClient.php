@@ -29,6 +29,23 @@ final class PythonServerClient
     /** @return array{ok: bool, message: string} */
     public function send(string $command, array $args, ?int $readTimeout = null): array
     {
+        $started = microtime(true);
+        $reply = $this->dispatch($command, $args, $readTimeout);
+        error_log(sprintf(
+            '[python-server] page=%s command=%s args=%s -> %s in %d ms%s',
+            $_SERVER['SCRIPT_NAME'] ?? 'cli',
+            $command,
+            json_encode(array_map(static fn($v) => is_string($v) ? mb_substr($v, 0, 100) : $v, $args), JSON_UNESCAPED_UNICODE),
+            $reply['ok'] ? 'ok' : 'FAILED',
+            (int)((microtime(true) - $started) * 1000),
+            $reply['ok'] ? '' : ': ' . mb_substr($reply['message'], 0, 200),
+        ));
+        return $reply;
+    }
+
+    /** @return array{ok: bool, message: string} */
+    private function dispatch(string $command, array $args, ?int $readTimeout): array
+    {
         // Docker Desktop resolves host.docker.internal to an unreachable IPv6 address first, so prefer IPv4
         $ipv4 = filter_var($this->host, FILTER_VALIDATE_IP) ? false : gethostbynamel($this->host);
         $address = $ipv4[0] ?? $this->host;
