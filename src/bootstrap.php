@@ -24,6 +24,12 @@ function e(mixed $value): string
     return htmlspecialchars((string)$value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
 }
 
+/** The HTML attribute that marks an <option> as chosen. */
+function selected(bool $on): string
+{
+    return $on ? ' selected' : '';
+}
+
 function redirect(string $location): never
 {
     header('Location: ' . $location);

@@ -1,0 +1,9 @@
+# Usernames for "Collect tweets/followers from the username list".
+# One username per line (or several separated by spaces), with or without the leading @.
+# Lines starting with # are ignored. Letters, digits and _ only, up to 15 characters.
+#
+# Copy this file to the folder set as file_path_for_list_of_username in config.ini
+# (it is copied there automatically the first time you run a list command).
+
+NASA
+@elonmusk

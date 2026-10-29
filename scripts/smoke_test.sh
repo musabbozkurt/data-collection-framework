@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Registers a throw-away user, signs in and checks that the pages render and reach the Python server.
-# Usage: scripts/smoke_test.sh [base_url]   (PHP app on :3000 and Python server on :5555 must be running)
+# Usage: scripts/smoke_test.sh [base_url]   (run `docker-compose up -d --build` first)
 set -euo pipefail
 
 BASE=${1:-http://localhost:3000}
@@ -22,7 +22,7 @@ curl -fsS -b "$JAR" -c "$JAR" -o /dev/null --data-urlencode "csrf=$(csrf registe
 curl -fsS -b "$JAR" -c "$JAR" -o /dev/null --data-urlencode "csrf=$(csrf login.php)" \
   --data-urlencode "email=$EMAIL" --data-urlencode "password=$PASSWORD" "$BASE/login.php"
 
-for page in index.php scraper.php profile.php mongo.php; do
+for page in index.php scraper.php profile.php discover.php mongo.php analytics.php crossval.php terms.php store.php usernames.php; do
   check "$page" "$(status "$page")" 200
 done
 
@@ -30,6 +30,11 @@ done
 reply=$(curl -fsS -b "$JAR" -c "$JAR" --data-urlencode "csrf=$(csrf profile.php)" \
   --data-urlencode "username=not a name" --data-urlencode "max_tweets=5" "$BASE/profile.php")
 echo "$reply" | grep -q "Enter a valid X username" && echo "ok   profile validation" || { echo "FAIL profile validation"; exit 1; }
+
+# Discover Profiles: selecting nothing is rejected by the page itself
+reply=$(curl -fsS -b "$JAR" -c "$JAR" --data-urlencode "csrf=$(csrf discover.php)" \
+  --data-urlencode "action=scrape" --data-urlencode "max_tweets=3" "$BASE/discover.php")
+echo "$reply" | grep -q "Tick at least one profile" && echo "ok   discover validation" || { echo "FAIL discover validation"; exit 1; }
 
 # A valid request is forwarded to the Python server, which answers (even if only with an error message)
 reply=$(curl -fsS -b "$JAR" -c "$JAR" --data-urlencode "csrf=$(csrf profile.php)" \

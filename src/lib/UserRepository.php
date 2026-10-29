@@ -24,6 +24,13 @@ final class UserRepository
         return $statement->fetch() ?: null;
     }
 
+    /** The first account that was created; only it may change the settings. */
+    public function firstUserId(): ?int
+    {
+        $id = $this->pdo->query('SELECT MIN(id) FROM users')->fetchColumn();
+        return $id === null || $id === false ? null : (int)$id;
+    }
+
     public function create(string $name, string $email, string $password): void
     {
         $statement = $this->pdo->prepare(

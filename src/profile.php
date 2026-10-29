@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             default => 'other',
         };
         $result = PythonServerClient::fromEnv()->send('connectx', ['browser' => $browser], CONNECT_TIMEOUT_SECONDS);
-    } elseif (preg_match('/^[A-Za-z0-9_]{1,15}$/', $username) !== 1) {
+    } elseif (preg_match('/^\w{1,15}$/', $username) !== 1) {
         $error = 'Enter a valid X username (letters, digits and underscores, up to 15 characters).';
     } elseif ($maxTweets === false) {
         $error = 'New tweets must be a number between 1 and ' . MAX_TWEETS . '.';
@@ -93,7 +93,7 @@ render('header', ['title' => 'X Profile Scraper', 'active' => '']);
             <div class="form-group">
                 <label for="username">X username</label>
                 <input class="form-control" id="username" name="username" type="text" maxlength="16"
-                       pattern="@?[A-Za-z0-9_]{1,15}" placeholder="NASA" value="<?= e($username) ?>" required>
+                       pattern="@?\w{1,15}" placeholder="NASA" value="<?= e($username) ?>" required>
             </div>
             <div class="form-group">
                 <label for="max_tweets">New tweets to collect (1&ndash;<?= MAX_TWEETS ?>)</label>

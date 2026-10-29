@@ -5,6 +5,8 @@ from typing import Iterable, Mapping
 
 from data_collection_framework.config.settings import get_settings
 
+AUTHOR_PATH = "user.username"
+
 
 @lru_cache(maxsize=1)
 def get_client():
@@ -50,12 +52,38 @@ def overview(client=None) -> dict:
             for name in sorted(client.list_database_names()) if name not in SYSTEM_DATABASES}
 
 
-def documents_page(database: str, collection: str, page: int, page_size: int, client=None) -> dict:
-    """Returns one page of documents, newest first, as JSON-safe dicts (ObjectIds and dates become strings)."""
+def documents_page(database: str, collection: str, page: int, page_size: int, client=None,
+                   username: str = "") -> dict:
+    """Returns one page of documents, newest first, as JSON-safe dicts (ObjectIds and dates become strings).
+    With a username only that profile's documents are returned (served by an index)."""
     target = (client or get_client())[database][collection]
-    total = target.estimated_document_count()
+    query = {"$or": [{AUTHOR_PATH: username}, {"username": username}]} if username else {}
+    total = target.count_documents(query) if query else target.estimated_document_count()
     pages = max(1, -(-total // page_size))
     page = min(page, pages)
-    cursor = target.find().sort("_id", -1).skip((page - 1) * page_size).limit(page_size)
+    cursor = target.find(query).sort("_id", -1).skip((page - 1) * page_size).limit(page_size)
     return {"page": page, "pages": pages, "total": total,
             "documents": [_shorten(json.loads(json.dumps(document, default=str))) for document in cursor]}
+
+
+def profile_groups(database: str, collection: str, page: int, page_size: int, client=None) -> dict:
+    """Returns one page of {username, count} groups (busiest first) so tweets can be browsed per profile."""
+    target = (client or get_client())[database][collection]
+    target.create_index(AUTHOR_PATH)
+    target.create_index("username")
+    # scraped tweets keep the author in user.username; older data has a top-level username
+    owner = {"$ifNull": ["$user.username", "$username"]}
+    valid = {"$match": {"$or": [{AUTHOR_PATH: {"$type": "string", "$ne": ""}},
+                                {"username": {"$type": "string", "$ne": ""}}]}}
+    counted = list(target.aggregate([valid, {"$group": {"_id": owner}}, {"$count": "n"}]))
+    total = counted[0]["n"] if counted else 0
+    pages = max(1, -(-total // page_size))
+    page = min(page, pages)
+    rows = target.aggregate([
+        valid,
+        {"$group": {"_id": owner, "count": {"$sum": 1}}},
+        {"$sort": {"count": -1, "_id": 1}},
+        {"$skip": (page - 1) * page_size}, {"$limit": page_size},
+    ])
+    return {"page": page, "pages": pages, "total": total,
+            "groups": [{"username": row["_id"], "count": row["count"]} for row in rows]}

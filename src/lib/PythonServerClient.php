@@ -4,36 +4,50 @@ declare(strict_types=1);
 
 namespace App;
 
-/** Sends one command to the Python server (line-delimited JSON over TCP) and returns its reply. */
-final class PythonServerClient
+/**
+ * Sends one command to the Python back end and returns ['ok' => bool, 'message' => string].
+ * The transport is chosen with API_TRANSPORT: rest (default), graphql or tcp.
+ */
+abstract class PythonServerClient
 {
+    protected const UNEXPECTED_REPLY = 'Unexpected reply from the Python server';
+    protected const LONG_RUNNING = 'The command was accepted and is still running on the server.';
+
     public function __construct(
-        private string $host,
-        private int    $port,
-        private string $token = '',
-        private int    $connectTimeout = 3,
-        private int    $readTimeout = 30,
+        protected string $token = '',
+        protected int    $connectTimeout = 3,
+        protected int    $readTimeout = 30,
     )
     {
     }
 
     public static function fromEnv(): self
     {
-        return new self(
-            env('PY_SERVER_HOST', 'host.docker.internal'),
-            (int)env('PY_SERVER_PORT', '5555'),
-            env('PY_SERVER_TOKEN'),
-        );
+        $token = env('PY_SERVER_TOKEN');
+        return match (strtolower(env('API_TRANSPORT', 'rest'))) {
+            'tcp' => new TcpClient(env('PY_SERVER_HOST', 'host.docker.internal'), (int)env('PY_SERVER_PORT', '5555'), $token),
+            'graphql' => new GraphqlClient(env('PY_API_URL', 'http://python-api:8000'), $token),
+            default => new RestClient(env('PY_API_URL', 'http://python-api:8000'), $token),
+        };
+    }
+
+    /** Validates the decoded {"ok", "message"} reply shared by every transport. */
+    protected static function reply(mixed $decoded): array
+    {
+        return is_array($decoded) && isset($decoded['ok'], $decoded['message'])
+            ? ['ok' => (bool)$decoded['ok'], 'message' => (string)$decoded['message']]
+            : ['ok' => false, 'message' => self::UNEXPECTED_REPLY];
     }
 
     /** @return array{ok: bool, message: string} */
     public function send(string $command, array $args, ?int $readTimeout = null): array
     {
         $started = microtime(true);
-        $reply = $this->dispatch($command, $args, $readTimeout);
+        $reply = $this->dispatch($command, $args, $readTimeout ?? $this->readTimeout);
         error_log(sprintf(
-            '[python-server] page=%s command=%s args=%s -> %s in %d ms%s',
+            '[python-server] page=%s transport=%s command=%s args=%s -> %s in %d ms%s',
             $_SERVER['SCRIPT_NAME'] ?? 'cli',
+            static::class,
             $command,
             json_encode(array_map(static fn($v) => is_string($v) ? mb_substr($v, 0, 100) : $v, $args), JSON_UNESCAPED_UNICODE),
             $reply['ok'] ? 'ok' : 'FAILED',
@@ -44,34 +58,5 @@ final class PythonServerClient
     }
 
     /** @return array{ok: bool, message: string} */
-    private function dispatch(string $command, array $args, ?int $readTimeout): array
-    {
-        // Docker Desktop resolves host.docker.internal to an unreachable IPv6 address first, so prefer IPv4
-        $ipv4 = filter_var($this->host, FILTER_VALIDATE_IP) ? false : gethostbynamel($this->host);
-        $address = $ipv4[0] ?? $this->host;
-        $socket = @stream_socket_client("tcp://{$address}:{$this->port}", $errno, $error, $this->connectTimeout);
-        if ($socket === false) {
-            return ['ok' => false, 'message' => "Cannot reach the Python server ({$error})"];
-        }
-
-        try {
-            stream_set_timeout($socket, $readTimeout ?? $this->readTimeout);
-            $payload = json_encode(['command' => $command, 'args' => $args, 'token' => $this->token], JSON_THROW_ON_ERROR);
-            fwrite($socket, $payload . "\n");
-            $line = fgets($socket);
-
-            if ($line === false) {
-                $timedOut = stream_get_meta_data($socket)['timed_out'] ?? false;
-                return $timedOut
-                    ? ['ok' => true, 'message' => 'The command was accepted and is still running on the server.']
-                    : ['ok' => false, 'message' => 'The Python server closed the connection without a reply'];
-            }
-            $reply = json_decode($line, true);
-            return is_array($reply) && isset($reply['ok'], $reply['message'])
-                ? ['ok' => (bool)$reply['ok'], 'message' => (string)$reply['message']]
-                : ['ok' => false, 'message' => 'Unexpected reply from the Python server'];
-        } finally {
-            fclose($socket);
-        }
-    }
+    abstract protected function dispatch(string $command, array $args, int $readTimeout): array;
 }

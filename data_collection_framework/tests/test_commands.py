@@ -47,8 +47,9 @@ def test_past_timestamp_is_rejected():
 def test_real_registry_exposes_all_commands():
     from data_collection_framework.commands.definitions import build_registry
     names = {c.name for c in build_registry().all()}
-    assert {"plotlanguage", "storedata", "streamfrominput", "termfrequency", "crossvalidation"} <= names
-    assert len(names) == 30
+    assert {"plotlanguage", "storedata", "streamfrominput", "termfrequency", "crossvalidation", "mongoanalytics",
+            "mongocrossvalidation"} <= names
+    assert len(names) == 50
 
 
 class FakeCollection:
@@ -58,7 +59,7 @@ class FakeCollection:
     def estimated_document_count(self):
         return len(self.documents)
 
-    def find(self):
+    def find(self, *_):
         return self
 
     def sort(self, *_):
@@ -107,3 +108,14 @@ def test_mongo_overview_and_documents_page():
     last = documents_page("demo", "tweets", 99, 2, client)  # out-of-range pages fall back to the last one
     assert last["page"] == 3
     assert [d["n"] for d in last["documents"]] == [4]
+
+
+def test_storefiles_rejects_unknown_files():
+    from data_collection_framework.commands.base import CommandError
+    from data_collection_framework.commands.definitions import build_registry
+    registry = build_registry()
+    with pytest.raises(CommandError, match="Unknown file"):
+        registry.execute("storefiles", {"database": "d", "collection": "c", "files": "data_folders/nope.txt"})
+    with pytest.raises(CommandError, match="Unknown file"):
+        registry.execute("storefiles",
+                         {"database": "d", "collection": "c", "files": "data_folders/../config/config.ini"})

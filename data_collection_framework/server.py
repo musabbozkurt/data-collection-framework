@@ -4,7 +4,6 @@
 Request : {"command": "plotlanguage", "args": {"bars": 5}, "token": "..."}\n
 Response: {"ok": true, "message": "..."}\n
 """
-import hmac
 import json
 import os
 import socket
@@ -14,6 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(os.path.realpath
 
 from data_collection_framework.commands.base import CommandError, CommandRegistry  # noqa: E402
 from data_collection_framework.commands.definitions import build_registry  # noqa: E402
+from data_collection_framework.commands.dispatch import run_command  # noqa: E402
 from data_collection_framework.config.settings import Settings, get_settings  # noqa: E402
 from data_collection_framework.logger import get_logger  # noqa: E402
 
@@ -40,22 +40,9 @@ def read_request(conn: socket.socket) -> dict:
 def handle(conn: socket.socket, registry: CommandRegistry, settings: Settings) -> dict:
     try:
         request = read_request(conn)
-        if settings.server_token and not hmac.compare_digest(str(request.get("token", "")), settings.server_token):
-            return {"ok": False, "message": "Unauthorized"}
-        args = request.get("args") or {}
-        if not isinstance(args, dict):
-            raise CommandError("'args' must be an object")
-        log.info("Request: command=%s args=%s", request.get("command"), args)
-        return {"ok": True, "message": registry.execute(str(request.get("command", "")), args)}
     except CommandError as error:
         return {"ok": False, "message": str(error)}
-    except Exception as error:  # keep the server alive whatever a command does
-        response = getattr(error, "response", None)
-        if response is not None and getattr(response, "status_code", None):
-            log.error("Twitter API error: %s", error)
-            return {"ok": False, "message": f"Twitter API error: {str(error).strip()}"}
-        log.exception("Command failed")
-        return {"ok": False, "message": "Command failed; see the server log"}
+    return run_command(registry, settings, request.get("command", ""), request.get("args"), request.get("token"))
 
 
 def serve(settings: Settings = None) -> None:
