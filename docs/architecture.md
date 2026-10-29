@@ -43,7 +43,7 @@ The Python side is authoritative for validation; the PHP side only checks requir
 
 ## Testing and CI
 
-GitHub Actions (`.github/workflows/ci.yml`) runs on every push and pull request: pytest on Python 3.12, a `php -l`
+GitHub Actions (`.github/workflows/ci.yml`) runs on every push and pull request: pytest on Python 3.15, a `php -l`
 syntax check of `src/`, and a smoke test (`scripts/smoke_test.sh`) that starts the whole compose stack, signs up and in,
 loads the pages and checks that PHP reaches the Python server. Run the smoke test locally against a running stack with
 `bash scripts/smoke_test.sh`.
