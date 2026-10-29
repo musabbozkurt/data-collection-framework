@@ -7,7 +7,8 @@
     - `index.php` renders every command form from `CommandCatalog` (no per-command code)
 - `data_collection_framework/` Python back end
     - `commands/` Command pattern: `base.py` (Command, Param validators, registry) and `definitions.py`
-    - `server.py` thin socket loop; `menu.py` console UI; both only call the registry
+    - `api/app.py` REST + GraphQL (served by `api_server.py`), `server.py` legacy TCP loop, all through
+      `commands/dispatch.py`; `menu.py` console UI; both only call the registry
     - `config/settings.py` lazy, immutable settings (env vars override the config file)
     - `storage/` shared MongoDB client/repository (batched inserts) and streaming file readers
     - collectors (`TweetCollector`, `FollowerCollector`, `StreamCollector`, `MongoWriter`) receive their dependencies
@@ -43,9 +44,9 @@ The Python side is authoritative for validation; the PHP side only checks requir
 ## Testing and CI
 
 GitHub Actions (`.github/workflows/ci.yml`) runs on every push and pull request: pytest on Python 3.12, a `php -l`
-syntax check of `src/`, and a smoke test (`scripts/smoke_test.sh`) that starts the Python server and the PHP app with
-MariaDB, signs up and in, loads the pages and checks that PHP reaches the Python server. Run the smoke test locally
-against a running stack with `bash scripts/smoke_test.sh`.
+syntax check of `src/`, and a smoke test (`scripts/smoke_test.sh`) that starts the whole compose stack, signs up and in,
+loads the pages and checks that PHP reaches the Python server. Run the smoke test locally against a running stack with
+`bash scripts/smoke_test.sh`.
 
 ## Notes
 

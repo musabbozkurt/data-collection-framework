@@ -17,8 +17,9 @@ profile details) instead of parsing HTML.
   (`data_collection_framework/x_profile_data/<user>/`), MongoDB storage (`x_profile_db.profile_tweets`), an engagement
   summary and an optional proxy (`X_PROXY=host:port[:user:password]`).
 - Without a login (the default) it reads the public profile page, which gives the latest handful of posts.
-- For deeper scrolling click **Connect X account** on the page (or run `make browsers` then `make x-login`): a sign-in
-  window opens on the machine running `server.py` and, once you are signed in by any method, the session is saved
+- For deeper scrolling click **Connect X account** on the page (or run `make browsers` then `make x-login` on your
+  machine; the Docker container cannot open a window): a sign-in
+  window opens locally and, once you are signed in by any method, the session is saved
   automatically and used from then on.
 - Terminal use: `.venv/bin/python data_collection_framework/x_profile_scraper.py user NASA --max 100 --resume`.
 - Not taken over from the article: automation-flag hiding, randomized "human" timing and the OpenAI analysis (the
@@ -72,8 +73,9 @@ passwords.
   to replace it, or tick *clear* to remove it.
 - Values are validated (folders must be relative, no quotes or `$` in secrets); comments in the files are kept.
 - If `.env` does not exist yet, it is created with just the values you change; other settings keep their defaults.
-- Changes apply after restarting the Python server (and `docker compose up -d` for values that Docker reads).
-  Database passwords in `.env` do not change an existing MariaDB/MongoDB volume.
+- In Docker only `config.ini` is editable here (`.env` is read by Compose); `MONGO_URI` comes from Compose.
+- Changes apply after restarting the Python server (`docker compose restart python-api`) (and `docker compose up -d` for
+  values that Docker reads). Database passwords in `.env` do not change an existing MariaDB/MongoDB volume.
 
 ## Console
 

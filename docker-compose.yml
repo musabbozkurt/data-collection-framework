@@ -28,6 +28,30 @@ services:
     ports:
       - "127.0.0.1:8080:80"
 
+  python-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.python
+    restart: unless-stopped
+    depends_on:
+      - mongo_db
+    environment:
+      MONGO_URI: mongodb://root:${MONGO_ROOT_PASSWORD:-password}@mongo_db:27017/?authSource=admin
+      PY_SERVER_TOKEN: ${PY_SERVER_TOKEN:-}
+      X_PROXY: ${X_PROXY:-}
+      TWITTER_CONSUMER_KEY: ${TWITTER_CONSUMER_KEY:-}
+      TWITTER_CONSUMER_SECRET: ${TWITTER_CONSUMER_SECRET:-}
+      TWITTER_ACCESS_KEY: ${TWITTER_ACCESS_KEY:-}
+      TWITTER_ACCESS_SECRET: ${TWITTER_ACCESS_SECRET:-}
+      TWITTER_BEARER_TOKEN: ${TWITTER_BEARER_TOKEN:-}
+    volumes:
+      # collected files, the saved X session / exports and config.ini live on the host
+      - ./data_collection_framework/data_folders:/app/data_collection_framework/data_folders
+      - ./data_collection_framework/x_profile_data:/app/data_collection_framework/x_profile_data
+      - ./data_collection_framework/config:/app/data_collection_framework/config
+    ports:
+      - "127.0.0.1:8000:8000"
+
   php-app:
     build:
       context: .
@@ -38,12 +62,16 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      python-api:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_NAME: ${DB_NAME:-root_db}
       DB_USER: ${DB_USER:-user}
       DB_PASSWORD: ${DB_PASSWORD:-user}
-      # The Python server runs on the host, outside Docker
+      # rest (default), graphql or tcp. tcp expects `make server` on the host (PY_SERVER_HOST/PORT)
+      API_TRANSPORT: ${API_TRANSPORT:-rest}
+      PY_API_URL: http://python-api:8000
       PY_SERVER_HOST: host.docker.internal
       PY_SERVER_PORT: ${PY_SERVER_PORT:-5555}
       PY_SERVER_TOKEN: ${PY_SERVER_TOKEN:-}

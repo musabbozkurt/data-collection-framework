@@ -411,6 +411,8 @@ class ProfileScraper:
         known = set(known_ids)
         async with async_playwright() as playwright:
             options: Dict[str, Any] = {"headless": self.headless}
+            if os.environ.get("IN_DOCKER"):
+                options["args"] = ["--no-sandbox"]  # the container user cannot create Chromium's own sandbox
             if self.proxy:
                 options["proxy"] = self.proxy
             browser = await playwright.chromium.launch(**options)

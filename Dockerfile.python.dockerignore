@@ -1,0 +1,11 @@
+.git
+.venv
+.idea
+database
+src
+docs
+data_collection_framework/tests
+data_collection_framework/pypro.log
+data_collection_framework/data_folders
+data_collection_framework/x_profile_data
+**/__pycache__

@@ -3,6 +3,7 @@
 Files are edited line by line, so comments and the order of the keys stay as they are. Secret values are
 never returned; leaving one empty on save keeps the stored value.
 """
+import os
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -66,6 +67,9 @@ FIELDS = (
     Field(ENV, "MONGO_ROOT_PASSWORD", "MongoDB root password", "", SECRET, True),
     Field(ENV, "MONGO_EXPRESS_PASSWORD", "mongo-express password", "", SECRET, True),
 )
+# Inside Docker the .env file belongs to the host (Docker Compose reads it), so only config.ini is editable.
+if os.environ.get("SETTINGS_CONFIG_ONLY"):
+    FIELDS = tuple(field for field in FIELDS if field.file == CONFIG)
 BY_KEY = {field.key: field for field in FIELDS}
 _LINE = re.compile(r"^\s*(\w+)\s*[=:](.*)$")
 

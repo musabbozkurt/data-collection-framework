@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Registers a throw-away user, signs in and checks that the pages render and reach the Python server.
-# Usage: scripts/smoke_test.sh [base_url]   (PHP app on :3000 and Python server on :5555 must be running)
+# Usage: scripts/smoke_test.sh [base_url]   (run `docker-compose up -d --build` first)
 set -euo pipefail
 
 BASE=${1:-http://localhost:3000}

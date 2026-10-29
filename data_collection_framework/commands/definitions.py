@@ -2,6 +2,7 @@
 import base64
 import json
 import logging
+import os
 from functools import partial
 
 from data_collection_framework.analytics import (CHOICES, FIELD_PATTERN, analyze, available_metrics, collection_fields,
@@ -228,6 +229,9 @@ def scrape_selected(settings, usernames, max_tweets):
 
 def connect_x(browser):
     from data_collection_framework.x_profile_scraper import login
+    if os.environ.get("IN_DOCKER"):
+        raise CommandError("The sign-in window cannot open inside Docker. Run 'make x-login' on this computer: "
+                           "the saved session is shared with the container.")
     try:
         return login(browser=browser)
     except RuntimeError as error:

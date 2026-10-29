@@ -102,6 +102,9 @@ render('header', ['title' => 'Settings', 'active' => '']);
             <form method="post" action="settings.php" class="analytics-form" autocomplete="off">
                 <?= Csrf::field() ?>
                 <?php foreach (SECTIONS as $file => [$title, $description]): ?>
+                    <?php if (!in_array($file, array_column($loaded['rows'], 'file'), true)) {
+                        continue;
+                    } ?>
                     <h3><?= e($title) ?></h3>
                     <p class="text-muted"><?= e($description) ?></p>
                     <?php foreach ($loaded['rows'] as $row): ?>

@@ -4,24 +4,22 @@ Collects tweets, followers and streams, stores them in MongoDB and analyses them
 A PHP web UI (login + command forms) talks to a Python command server.
 
 ```
-Browser ──► PHP (Apache, :3000) ──JSON over TCP──► Python server.py (:5555) ──► MongoDB / Twitter API
+Browser ──► PHP (Apache, :3000) ──REST (or GraphQL / TCP)──► Python API (:8000) ──► MongoDB / Twitter API
                 │
               MariaDB (users)
 ```
 
 ## Quick start
 
-Requires `Python 3.8+` and `Docker`. Optional: copy [.env.example](.env.example) to `.env` and change the
-passwords/token (defaults work for local dev).
+Requires `Docker`. Optional: copy [.env.example](.env.example) to `.env` and change the passwords/token (defaults work
+for local dev).
 
-1. `docker-compose up -d --build` (MariaDB, phpMyAdmin, PHP app, MongoDB, mongo-express)
-2. Start the Python server: `make server` (the first run creates `.venv` and installs the packages; it reads
-   `PY_SERVER_TOKEN` and `TWITTER_*` from the environment or `.env`). Stop it with `kill $(lsof -t -i:5555)`
-   (macOS/Linux).
-    - Without `make`:
-      `python3 -m venv .venv && .venv/bin/python -m pip install -r data_collection_framework/requirements.txt`,
-      then `.venv/bin/python data_collection_framework/server.py`.
-3. Open http://localhost:3000/, sign up, sign in and run commands.
+1. `docker-compose up -d --build` starts everything: PHP app, Python API, MariaDB, phpMyAdmin, MongoDB, mongo-express.
+2. Open http://localhost:3000/, sign up, sign in and run commands.
+
+Optional: `make x-login` opens a browser on your machine to save an X session for deeper profile scrapes (the container
+shares it through a volume). Use `make server` only for the legacy TCP mode (`API_TRANSPORT=tcp`).
+See [docs/api.md](docs/api.md).
 
 No X login or API credentials are needed for the scraper, profile and MongoDB pages. Credentials for the older API
 collectors: see [docs/twitter-api-credentials.md](docs/twitter-api-credentials.md).
@@ -32,6 +30,7 @@ Prefer a console? Run `make menu` (same commands).
 
 - [Web UI pages](docs/pages.md): what each page does (scrapers, discovery, store, analytics, cross validation)
 - [Twitter / X API credentials](docs/twitter-api-credentials.md): how to get keys and API tier notes
+- [REST / GraphQL API](docs/api.md): endpoints, token, switching transport
 - [Architecture and configuration](docs/architecture.md): project layout, adding a command, `config.ini`, networking, CI
 
 ## Services in [docker-compose.yml](docker-compose.yml)
@@ -39,6 +38,7 @@ Prefer a console? Run `make menu` (same commands).
 | Service           | URL                       | Credentials                                                |
 |-------------------|---------------------------|------------------------------------------------------------|
 | PHP app           | http://localhost:3000     | sign up in the UI                                          |
+| Python API        | http://127.0.0.1:8000     | `Authorization: Bearer <PY_SERVER_TOKEN>`                  |
 | phpMyAdmin        | http://localhost:8080     | MariaDB user/password from `.env` (default `user`)         |
 | mongo-express     | http://localhost:8081     | `mexpress` / `MONGO_EXPRESS_PASSWORD` (default `mexpress`) |
 | MariaDB / MongoDB | bound to `127.0.0.1` only | see `.env.example`                                         |
