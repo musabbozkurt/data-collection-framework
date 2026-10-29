@@ -48,7 +48,10 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Start the stack (PHP app, Python API, MariaDB, MongoDB)
-        run: docker compose up -d --build --wait php-app
+        # The runner user owns the checkout; run the API as that user so it can write the mounted folders
+        run: |
+          mkdir -p data_collection_framework/x_profile_data
+          APP_UID=$(id -u) APP_GID=$(id -g) docker compose up -d --build --wait php-app
       - name: Smoke test
         run: bash scripts/smoke_test.sh http://localhost:3000
       - name: Show logs on failure

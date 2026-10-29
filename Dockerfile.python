@@ -15,7 +15,8 @@ COPY data_collection_framework data_collection_framework
 # Unprivileged user; data and config folders are mounted from the host (see docker-compose.yml)
 RUN useradd --uid 1000 --create-home app \
     && mkdir -p data_collection_framework/data_folders data_collection_framework/x_profile_data \
-    && chown -R app:app /app
+    && chown -R app:app /app \
+    && chmod a+rwx /app data_collection_framework/data_folders data_collection_framework/x_profile_data
 USER app
 EXPOSE 8000
 HEALTHCHECK --interval=10s --timeout=5s --retries=12 \

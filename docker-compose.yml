@@ -33,6 +33,8 @@ services:
       context: .
       dockerfile: Dockerfile.python
     restart: unless-stopped
+    # Same uid as the host owner of the mounted folders; on Linux set APP_UID/APP_GID (id -u / id -g) if not 1000
+    user: "${APP_UID:-1000}:${APP_GID:-1000}"
     depends_on:
       - mongo_db
     environment:
