@@ -25,6 +25,19 @@ final class Auth
         return $_SESSION['user'] ?? null;
     }
 
+    /** True for the first registered account, the only one allowed to edit the settings. */
+    public static function isAdmin(): bool
+    {
+        $user = self::user();
+        if (!$user) {
+            return false;
+        }
+        if (!isset($_SESSION['user']['admin'])) {
+            $_SESSION['user']['admin'] = (new UserRepository(Database::connection()))->firstUserId() === (int)$user['id'];
+        }
+        return $_SESSION['user']['admin'];
+    }
+
     public static function logout(): void
     {
         $_SESSION = [];

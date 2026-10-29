@@ -49,7 +49,7 @@ def test_real_registry_exposes_all_commands():
     names = {c.name for c in build_registry().all()}
     assert {"plotlanguage", "storedata", "streamfrominput", "termfrequency", "crossvalidation", "mongoanalytics",
             "mongocrossvalidation"} <= names
-    assert len(names) == 48
+    assert len(names) == 50
 
 
 class FakeCollection:

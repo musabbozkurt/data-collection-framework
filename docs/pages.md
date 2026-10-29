@@ -62,6 +62,19 @@ confusion matrix with charts. It needs at least two labels with as many document
 **Term Frequency (MongoDB)** (`/terms.php`) counts the most common terms, hashtags and co-occurring word pairs of any
 text field.
 
+## Settings
+
+**Settings** (`/settings.php`, visible only to the first registered account) edits `config.ini` and `.env` from the
+browser: database connection, Twitter API keys, streaming keywords, data folders, server port/token and database
+passwords.
+
+- Secrets (keys, tokens, passwords, the Mongo URI) are never shown again. Leave one empty to keep it, type a new value
+  to replace it, or tick *clear* to remove it.
+- Values are validated (folders must be relative, no quotes or `$` in secrets); comments in the files are kept.
+- If `.env` does not exist yet, it is created with just the values you change; other settings keep their defaults.
+- Changes apply after restarting the Python server (and `docker compose up -d` for values that Docker reads).
+  Database passwords in `.env` do not change an existing MariaDB/MongoDB volume.
+
 ## Console
 
 Prefer a console instead of the web UI? Run `make menu` (it uses the same commands).

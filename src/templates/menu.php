@@ -25,4 +25,7 @@ $active = static fn(string $page): string => $current === $page ? ' active' : ''
     <a class="menu-item<?= $active('crossval') ?>" href="crossval.php">Cross Validation
         (MongoDB)</a>
     <a class="menu-item<?= $active('terms') ?>" href="terms.php">Term Frequency (MongoDB)</a>
+    <?php if (\App\Auth::isAdmin()): ?>
+        <a class="menu-item<?= $active('settings') ?>" href="settings.php">Settings</a>
+    <?php endif; ?>
 </div>

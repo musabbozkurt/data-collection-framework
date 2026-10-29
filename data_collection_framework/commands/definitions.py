@@ -9,6 +9,7 @@ from data_collection_framework.analytics import (CHOICES, FIELD_PATTERN, analyze
 from data_collection_framework.commands.base import (Command, CommandError, CommandRegistry, Param, decimal,
                                                      future_timestamp,
                                                      integer, text)
+from data_collection_framework.config import editor
 from data_collection_framework.config.settings import Settings, get_settings
 from data_collection_framework.nlp.term_frequency import co_occurrences, plot_pairs, term_counter
 from data_collection_framework.storage.files import (USERNAMES_TEMPLATE, read_usernames,
@@ -18,6 +19,7 @@ from data_collection_framework.storage.mongo import MongoRepository, documents_p
 log = logging.getLogger(__name__)
 SELECTED_LIMIT = 5
 MAX_KEYWORDS = 5
+BASE64_PATTERN = r"[A-Za-z0-9+/=]{4,60000}"
 WORD_PATTERN = r"\S{1,100}"
 NAME_PATTERN = r"[A-Za-z0-9][A-Za-z0-9_.-]{0,63}"
 USERNAME = Param("username", "Twitter username", text(r"(?a)\w{1,15}"))
@@ -50,7 +52,7 @@ USER_OPTIONAL = Param("username", "Profile or '-' for all",
                       lambda value: "" if value.strip() == "-" else text(r"(?a)\w{1,15}")(value))
 FILES = Param("files", "Files (relative paths, comma separated)",
               text(r"[\w.\-/, ]{3,30000}"))
-UPLOAD_DATA = Param("data", "Documents (base64, one JSON document per line)", text(r"[A-Za-z0-9+/=]{4,60000}"))
+UPLOAD_DATA = Param("data", "Documents (base64, one JSON document per line)", text(BASE64_PATTERN))
 DATA_SUFFIXES = (".txt", ".json")
 SKIPPED_FILES = ("checkpoint.json",)
 BARS = Param("bars", "How many bars do you want to see in your plot?", integer(1, 100))
@@ -100,6 +102,15 @@ def save_username_file(settings, data):
         return f"Saved {save_usernames(settings.file_path_for_list_of_username, text)} usernames"
     except ValueError as error:
         raise CommandError(str(error) or "Invalid file") from None
+
+
+def save_settings_file(data):
+    try:
+        payload = json.loads(base64.b64decode(data, validate=True).decode("utf-8"))
+        files = editor.save_settings(payload["values"], payload.get("clear", []))
+    except (ValueError, KeyError, TypeError) as error:
+        raise CommandError(str(error) if isinstance(error, editor.SettingsError) else "Invalid settings data") from None
+    return json.dumps(files)
 
 
 def twitter_client(settings):
@@ -414,10 +425,15 @@ def build_registry(settings: Settings = None) -> CommandRegistry:
                               bind(store_files)))
     registry.register(Command("storeupload", "Store uploaded JSON documents in MongoDB",
                               (DATABASE, COLLECTION, UPLOAD_DATA), store_upload))
+    registry.register(Command("getsettings", "Show the editable settings; secrets are never returned (JSON)", (),
+                              lambda: json.dumps(editor.read_settings())))
+    registry.register(Command("savesettings", "Write settings to config.ini and .env (JSON list of changed files)",
+                              (Param("data", "Settings (base64 JSON)", text(BASE64_PATTERN)),),
+                              save_settings_file))
     registry.register(Command("listusernames", "List the usernames of the list file (JSON)", (),
                               lambda: json.dumps(listed_usernames(settings))))
     registry.register(Command("saveusernames", "Replace the username list with an uploaded file",
-                              (Param("data", "File content (base64)", text(r"[A-Za-z0-9+/=]{4,60000}")),),
+                              (Param("data", "File content (base64)", text(BASE64_PATTERN)),),
                               bind(save_username_file)))
     registry.register(Command("usernamestemplate", "Template of the username list file", (),
                               lambda: USERNAMES_TEMPLATE.read_text(encoding="utf-8")))
