@@ -30,6 +30,7 @@ Prefer a console? Run `make menu` (same commands).
 
 - [Web UI pages](docs/pages.md): what each page does (scrapers, discovery, store, analytics, cross validation)
 - [Twitter / X API credentials](docs/twitter-api-credentials.md): how to get keys and API tier notes
+- [AGENTS.md](docs/AGENTS.md): project structure, standards and how to add a command (for contributors and AI agents)
 - [REST / GraphQL API](docs/api.md): endpoints, token, switching transport
 - [Architecture and configuration](docs/architecture.md): project layout, adding a command, `config.ini`, networking, CI
 
