@@ -1,12 +1,11 @@
 """Batch scraper: finds X.com pages for keywords via DuckDuckGo and stores their content (via Jina Reader) in MongoDB."""
 import argparse
 import os
-import time
-from urllib.parse import quote_plus, urlparse
-
 import requests
+import time
 from ddgs import DDGS
 from pymongo import MongoClient
+from urllib.parse import quote_plus, urlparse
 
 # Defaults to the MongoDB container of docker-compose.yml, which requires the root credentials
 MONGO_URI = os.environ.get("MONGO_URI") or (

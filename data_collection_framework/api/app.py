@@ -1,12 +1,11 @@
 """HTTP front ends over the same command registry: REST (/api/...) and GraphQL (/graphql)."""
-from typing import Annotated, Any, Dict, List, Optional
-
 import strawberry
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.concurrency import run_in_threadpool
 from pydantic import BaseModel, Field
 from strawberry.fastapi import GraphQLRouter
 from strawberry.scalars import JSON
+from typing import Annotated, Any, Dict, List, Optional
 
 from data_collection_framework.commands.base import CommandRegistry
 from data_collection_framework.commands.definitions import build_registry

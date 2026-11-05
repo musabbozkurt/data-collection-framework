@@ -1,6 +1,5 @@
-from datetime import datetime, timedelta
-
 import pytest
+from datetime import datetime, timedelta
 
 from data_collection_framework.commands.base import (Command, CommandError, CommandRegistry, Param, future_timestamp,
                                                      integer, text)
