@@ -1,8 +1,7 @@
 import json
+import tweepy
 from datetime import datetime
 from pathlib import Path
-
-import tweepy
 
 from data_collection_framework.logger import get_logger
 from data_collection_framework.storage.mongo import MongoRepository

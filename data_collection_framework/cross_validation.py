@@ -1,7 +1,6 @@
 import math
 import string
 from pathlib import Path
-
 from sklearn import metrics, svm
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics import classification_report

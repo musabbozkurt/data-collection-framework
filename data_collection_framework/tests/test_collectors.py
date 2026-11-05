@@ -1,7 +1,6 @@
 import json
-from types import SimpleNamespace
-
 import pytest
+from types import SimpleNamespace
 
 from data_collection_framework.analysis import Analysis
 from data_collection_framework.mongo_writer import MongoWriter

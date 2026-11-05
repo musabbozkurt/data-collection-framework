@@ -1,9 +1,8 @@
 import json
+import pytest
 import socket
 import threading
 from dataclasses import replace
-
-import pytest
 from fastapi.testclient import TestClient
 
 from data_collection_framework import server
